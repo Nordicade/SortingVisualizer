@@ -4,17 +4,18 @@
 import pygame
 import time
 import random
+import matplotlib.pyplot as plt
 
 pygame.init()
 
 display_width = 1200
-display_height = 900
+display_height = 600
 
 black = (0,0,0)
 gray = (214,214,214, 1)
 white = (255,255,255)
 
-visualizer_dim = 50,125,1100,275
+visualizer_dim = 50,125,1100,300
 left_dim = 50,450,350,300
 middle_dim = 425,450,350,300
 right_dim = 800,450,350,300
@@ -60,6 +61,24 @@ def insertion_sort():
     draw_element_array()
     pause_UI = False
 
+def demo_insertion_sort():
+    global pause_UI
+    global current_array
+    for index in range(1, len(current_array)):
+        current_element = current_array[index]
+        current_length = (current_array[index]).line_length
+        checking_index = index - 1
+        while checking_index >= 0 and (current_array[checking_index]).line_length > current_length:
+            #current_array[index], current_array[checking_index] = current_array[checking_index], current_array[index]
+            current_array[checking_index + 1] = current_array[checking_index]
+            checking_index = checking_index - 1
+            #draw_element_array()
+            print("adjustment")
+            time.sleep(1)
+        current_array[checking_index + 1] = current_element
+    draw_element_array()
+    pause_UI = False
+
 def selection_sort():
     print("selection")
 def quick_sort():
@@ -69,7 +88,7 @@ def merge_sort():
 def heap_sort():
     print("heap")
 
-def draw_element_array():
+def draw_element_array(x, y, width, height):
     global current_array
     index = 0
     for element in current_array:
@@ -88,11 +107,10 @@ def initial_build():
     original_array = element_array.copy()
     current_array = element_array
     random.shuffle(element_array)
-    #draw_element_array()
     draw_outline(visualizer_dim)
-    draw_outline(left_dim)
-    draw_outline(middle_dim)
-    draw_outline(right_dim)
+#    draw_outline(left_dim)
+#    draw_outline(middle_dim)
+#    draw_outline(right_dim)
 
 def draw_outline(dimensions):
     x, y, width, height = dimensions[0], dimensions[1], dimensions[2], dimensions[3]
@@ -110,6 +128,11 @@ def draw_sort_buttons():
     b4 = pygame.Rect((display_width /5) * 3,0,(display_width /5) * 1, 100)
     b5 = pygame.Rect((display_width /5) * 4,0,(display_width /5) * 1, 100)
 
+    b6 = pygame.Rect((display_width /7) * 1,450,(display_width /7) * 1, 100)
+    b7 = pygame.Rect((display_width /7) * 3,450,(display_width /7) * 1, 100)
+    b8 = pygame.Rect((display_width /7) * 5,450,(display_width /7) * 1, 100)
+
+
     pygame.draw.rect(display, black,b1)
     pygame.draw.rect(display, gray, (b1.x + 5, b1.y + 5, b1.width - 10, b1.height - 10))
     pygame.draw.rect(display, black,b2)
@@ -120,6 +143,13 @@ def draw_sort_buttons():
     pygame.draw.rect(display, gray, (b4.x + 5, b4.y + 5, b4.width - 10, b4.height - 10))
     pygame.draw.rect(display, black,b5)
     pygame.draw.rect(display, gray, (b5.x + 5, b5.y + 5, b5.width - 10, b5.height - 10))
+
+    pygame.draw.rect(display, black,b6)
+    pygame.draw.rect(display, gray, (b6.x + 5, b6.y + 5, b6.width - 10, b6.height - 10))
+    pygame.draw.rect(display, black,b7)
+    pygame.draw.rect(display, gray, (b7.x + 5, b7.y + 5, b7.width - 10, b7.height - 10))
+    pygame.draw.rect(display, black,b8)
+    pygame.draw.rect(display, gray, (b8.x + 5, b8.y + 5, b8.width - 10, b8.height - 10))
 
     draw_text(b1.x + (b1.width / 4), b1.y+ (b1.height / 3), "Insertion")
     draw_text(b2.x + (b2.width / 4), b2.y+ (b2.height / 3), "Selection")
