@@ -18,7 +18,7 @@ left_array_dimensions = 0,0,0,0
 middle_array_dimensions = 0,0,0,0
 right_array_dimensions = 0,0,0,0
 
-sorting_algo = None
+sorting_algo = 1
 pause_UI = False
 
 original_array = []
@@ -41,7 +41,7 @@ def build_line_array(array_size):
         line_array.append(temp)
     return line_array
 
-def insertion_sort_line():
+def insertion_sort():
     global pause_UI
     global current_array
     for index in range(1, len(current_array)):
@@ -58,6 +58,15 @@ def insertion_sort_line():
         current_array[checking_index + 1] = current_element
     draw_element_array()
     pause_UI = False
+
+def selection_sort():
+    print("selection")
+def quick_sort():
+    print("quick")
+def merge_sort():
+    print("merge")
+def heap_sort():
+    print("heap")
 
 def draw_element_array():
     global current_array
@@ -100,16 +109,35 @@ def draw_sort_buttons():
     pygame.draw.rect(display, black,b5)
     pygame.draw.rect(display, gray, (b5.x + 5, b5.y + 5, b5.width - 10, b5.height - 10))
 
+    draw_text(b1.x + (b1.width / 4), b1.y+ (b1.height / 3), "Insertion")
+    draw_text(b2.x + (b2.width / 4), b2.y+ (b2.height / 3), "Selection")
+    draw_text(b3.x + (b3.width / 4), b3.y+ (b3.height / 3), "Merge")
+    draw_text(b4.x + (b4.width / 4), b4.y+ (b4.height / 3), "Quick")
+    draw_text(b5.x + (b5.width / 4), b5.y+ (b5.height / 3), "Heap")
 
-    #argeText = pygame.font.Font('freesansbold.ttf',115)
-    #TextSurf, TextRect = text_objects("Insertion", pygame.font.get_default_font())
-    #TextRect.center = ((display_width/2),(display_height/2))
-    #display.blit(TextSurf, TextRect)
+
+def draw_text(x, y, text):
+    pygame.font.init()
+    small_text = pygame.font.SysFont("arial.ttf", 35)
+    text_surface = small_text.render(text, True, black)
+    display.blit(text_surface, (x, y))
+
+def sorting_switch(integer):
+    print(integer)
+    switcher = {
+    1: insertion_sort,
+    2: selection_sort,
+    3: merge_sort,
+    4: quick_sort,
+    5: heap_sort,
+    }
+    switcher[integer]()
 
 def main_loop():
 
     exit_request = False
     global pause_UI
+    global sorting_algo
     draw_sort_buttons()
 
     #for i in range(len(element_array)):
@@ -124,28 +152,33 @@ def main_loop():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if pygame.mouse.get_pos()[1] <= 100:
                     if pygame.mouse.get_pos()[0] <= 240 and pygame.mouse.get_pos()[0] > 0:
-                        sorting_algo = "insertion"
+                        sorting_algo = 1
                         draw_sort_buttons()
                         pygame.draw.rect(display, white, (5, 5, 230, 90))
+                        draw_text(60, 33.3, "Insertion")
                     if pygame.mouse.get_pos()[0] <= 480 and pygame.mouse.get_pos()[0] > 240:
-                        print("button 2")
+                        sorting_algo = 2
                         draw_sort_buttons()
                         pygame.draw.rect(display, white, (240 + 5, 5, 230, 90))
+                        draw_text(300, 33.3, "Selection")
                     if pygame.mouse.get_pos()[0] <= 720 and pygame.mouse.get_pos()[0] > 480:
-                        print("button 3")
+                        sorting_algo = 3
                         draw_sort_buttons()
                         pygame.draw.rect(display, white, (480+5, 5, 230, 90))
+                        draw_text(540, 33.3, "Merge")
                     if pygame.mouse.get_pos()[0] <= 960 and pygame.mouse.get_pos()[0] > 720:
-                        print("button 4")
+                        sorting_algo = 4
                         draw_sort_buttons()
                         pygame.draw.rect(display, white, (720+5, 5, 230, 90))
+                        draw_text(780,33.3, "Quick")
                     if pygame.mouse.get_pos()[0] <= 1200 and pygame.mouse.get_pos()[0] > 960:
-                        print("button 5")
+                        sorting_algo = 5
                         draw_sort_buttons()
                         pygame.draw.rect(display, white, (960 + 5, 5, 230, 90))
+                        draw_text(1020, 33.3, "Heap")
             if event.type == pygame.KEYDOWN and pause_UI == False:
                 if pygame.key.get_pressed()[pygame.K_SPACE]:
-                    insertion_sort_line()
+                    sorting_switch(sorting_algo)
                     pause_UI = True
 
         pygame.display.update()
