@@ -8,15 +8,16 @@ import random
 pygame.init()
 
 display_width = 1200
-display_height = 800
+display_height = 900
 
 black = (0,0,0)
 gray = (214,214,214, 1)
 white = (255,255,255)
 
-left_array_dimensions = 0,0,0,0
-middle_array_dimensions = 0,0,0,0
-right_array_dimensions = 0,0,0,0
+visualizer_dim = 50,125,1100,275
+left_dim = 50,450,350,300
+middle_dim = 425,450,350,300
+right_dim = 800,450,350,300
 
 sorting_algo = 1
 pause_UI = False
@@ -70,7 +71,6 @@ def heap_sort():
 
 def draw_element_array():
     global current_array
-    display.fill(white)
     index = 0
     for element in current_array:
         pygame.draw.line(display, black, (100 + (index * 2) , display_height - 50), ( 100 + (index * 2), element.line_length) , 1)
@@ -81,11 +81,23 @@ def initial_build():
     element_array = build_line_array(300)
     global original_array
     global current_array
+    global visualizer_dim
+    global left_dim
+    global middle_dim
+    global right_dim
     original_array = element_array.copy()
     current_array = element_array
     random.shuffle(element_array)
-    draw_element_array()
+    #draw_element_array()
+    draw_outline(visualizer_dim)
+    draw_outline(left_dim)
+    draw_outline(middle_dim)
+    draw_outline(right_dim)
 
+def draw_outline(dimensions):
+    x, y, width, height = dimensions[0], dimensions[1], dimensions[2], dimensions[3]
+    rectangle = [(x,y) , (x + width, y), (x+width , y+height), (x , y+height)]
+    pygame.draw.lines(display, black,True,rectangle, 1)
 
 def text_objects(text, font):
     textSurface = font.render(text, True, black)
@@ -178,12 +190,14 @@ def main_loop():
                         draw_text(1020, 33.3, "Heap")
             if event.type == pygame.KEYDOWN and pause_UI == False:
                 if pygame.key.get_pressed()[pygame.K_SPACE]:
-                    sorting_switch(sorting_algo)
+                    print("space")
                     pause_UI = True
-
+                    sorting_switch(sorting_algo)
+                    pause_UI = False
         pygame.display.update()
 
-        #print("--- %s seconds ---" % (time.time() - start_time))
+        print("--- %s seconds ---" % (time.time() - start_time))
+display.fill(white)
 initial_build()
 main_loop()
 pygame.quit()

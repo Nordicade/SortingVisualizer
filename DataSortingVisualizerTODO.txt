@@ -3,3 +3,7 @@ DATA SORTING VISUALIZER
 
 TODO:
 everything
+
+NOTES:
+When checking when to update display, only update graph areas.
+Trying to update the whole canvas causes buttons and everything to flicker
