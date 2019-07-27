@@ -4,6 +4,16 @@ DATA SORTING VISUALIZER
 TODO:
 everything
 
+Bugs:
+Program closes after running draw_element_array() because it is missing dimension paramters
+
 NOTES:
 When checking when to update display, only update graph areas.
 Trying to update the whole canvas causes buttons and everything to flicker
+
+MatPlotLib cannot be cleanly placed within a pygame window.
+To work around this, just create rough draft on the window and then create a seperate window for matplotlib
+
+Add parameters to draw_element_array
+Sorting Demos will draw each step to the screen. 
+Normal sorting methods will output to a file/matplotlib

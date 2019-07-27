@@ -46,6 +46,7 @@ def build_line_array(array_size):
 def insertion_sort():
     global pause_UI
     global current_array
+    global visualizer_dim
     for index in range(1, len(current_array)):
         current_element = current_array[index]
         current_length = (current_array[index]).line_length
@@ -58,8 +59,7 @@ def insertion_sort():
             print("adjustment")
             #time.sleep(1)
         current_array[checking_index + 1] = current_element
-    draw_element_array()
-    pause_UI = False
+    draw_element_array(visualizer_dim)
 
 def demo_insertion_sort():
     global pause_UI
@@ -77,7 +77,6 @@ def demo_insertion_sort():
             time.sleep(1)
         current_array[checking_index + 1] = current_element
     draw_element_array()
-    pause_UI = False
 
 def selection_sort():
     print("selection")
@@ -191,7 +190,7 @@ def main_loop():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and pause_UI is False:
                 if pygame.mouse.get_pos()[1] <= 100:
                     if pygame.mouse.get_pos()[0] <= 240 and pygame.mouse.get_pos()[0] > 0:
                         sorting_algo = 1
