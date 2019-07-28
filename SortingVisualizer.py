@@ -47,7 +47,7 @@ def insertion_sort():
     global pause_UI
     global current_array
     global visualizer_dim
-    for index in range(1, len(current_array)):
+    for index in range(len(current_array)):
         current_element = current_array[index]
         current_length = (current_array[index]).line_length
         checking_index = index - 1
@@ -56,10 +56,11 @@ def insertion_sort():
             current_array[checking_index + 1] = current_array[checking_index]
             checking_index = checking_index - 1
             #draw_element_array()
-            print("adjustment")
             #time.sleep(1)
         current_array[checking_index + 1] = current_element
-    draw_element_array(visualizer_dim)
+    for x in range(len(current_array)):
+        print(x)
+    draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
 
 def demo_insertion_sort():
     global pause_UI
@@ -72,7 +73,7 @@ def demo_insertion_sort():
             #current_array[index], current_array[checking_index] = current_array[checking_index], current_array[index]
             current_array[checking_index + 1] = current_array[checking_index]
             checking_index = checking_index - 1
-            #draw_element_array()
+            draw_element_array()
             print("adjustment")
             time.sleep(1)
         current_array[checking_index + 1] = current_element
@@ -89,14 +90,19 @@ def heap_sort():
 
 def draw_element_array(x, y, width, height):
     global current_array
-    index = 0
+    width_var = (width / len(current_array))
+    height_var = (height/ len(current_array))
+    adjustment_var = (width / (2 * len(current_array)))
+    index = 1
     for element in current_array:
-        pygame.draw.line(display, black, (100 + (index * 2) , display_height - 50), ( 100 + (index * 2), element.line_length) , 1)
+        element_rect = pygame.Rect(x + (index * width_var), y + height, width / 20, (height_var * element.line_length))
+        element_rect.midbottom = x + (index * width_var) - adjustment_var ,(y + height)
+        pygame.draw.rect(display, black, element_rect, 1)
         pygame.display.update()
         index = index + 1
 
 def initial_build():
-    element_array = build_line_array(300)
+    element_array = build_line_array(20)
     global original_array
     global current_array
     global visualizer_dim

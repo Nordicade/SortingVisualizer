@@ -2,7 +2,10 @@ DATA SORTING VISUALIZER
 ------------------------
 
 TODO:
-everything
+add text and highlighted versions of play, reset, and data buttons
+tie events to buttons
+
+setup demo sorting
 
 Bugs:
 Program closes after running draw_element_array() because it is missing dimension paramters
