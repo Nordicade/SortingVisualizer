@@ -137,7 +137,6 @@ def draw_sort_buttons():
     b7 = pygame.Rect((display_width /7) * 3,450,(display_width /7) * 1, 100)
     b8 = pygame.Rect((display_width /7) * 5,450,(display_width /7) * 1, 100)
 
-
     pygame.draw.rect(display, black,b1)
     pygame.draw.rect(display, gray, (b1.x + 5, b1.y + 5, b1.width - 10, b1.height - 10))
     pygame.draw.rect(display, black,b2)
@@ -155,6 +154,19 @@ def draw_sort_buttons():
     pygame.draw.rect(display, gray, (b7.x + 5, b7.y + 5, b7.width - 10, b7.height - 10))
     pygame.draw.rect(display, black,b8)
     pygame.draw.rect(display, gray, (b8.x + 5, b8.y + 5, b8.width - 10, b8.height - 10))
+
+    play_icon = [(225, 475), (225, 525), (280, 500), (225, 475)]
+    restart_arrow = [(578,470),(598,460),(598,480),(578,470)]
+    cover_up = [(598, 500),(598,460),(560, 480),(598,500)]
+
+    pygame.draw.polygon(display, black, play_icon)
+    pygame.draw.circle(display, black, (598, 500), 35, 5)
+    pygame.draw.polygon(display, gray, cover_up)
+    pygame.draw.polygon(display, black, restart_arrow)
+    pygame.draw.rect(display, black, (887,520,30,20))
+    pygame.draw.rect(display, black, (927,490,30,50))
+    pygame.draw.rect(display, black, (967,460,30,80))
+
 
     draw_text(b1.x + (b1.width / 4), b1.y+ (b1.height / 3), "Insertion")
     draw_text(b2.x + (b2.width / 4), b2.y+ (b2.height / 3), "Selection")
@@ -223,6 +235,13 @@ def main_loop():
                         draw_sort_buttons()
                         pygame.draw.rect(display, white, (960 + 5, 5, 230, 90))
                         draw_text(1020, 33.3, "Heap")
+                if pygame.mouse.get_pos()[1]  >= 450 and pygame.mouse.get_pos()[1] < 550:
+                    if pygame.mouse.get_pos()[0] >= 171 and pygame.mouse.get_pos()[0] < 342:
+                        print("example button for play")
+                    if pygame.mouse.get_pos()[0] >= 513 and pygame.mouse.get_pos()[0] < 684:
+                        print("example button for restart")
+                    if pygame.mouse.get_pos()[0] >= 855 and pygame.mouse.get_pos()[0] < 1026:
+                        print("example button for stats")
             if event.type == pygame.KEYDOWN and pause_UI == False:
                 if pygame.key.get_pressed()[pygame.K_SPACE]:
                     print("space")

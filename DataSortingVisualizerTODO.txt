@@ -20,3 +20,15 @@ To work around this, just create rough draft on the window and then create a sep
 Add parameters to draw_element_array
 Sorting Demos will draw each step to the screen. 
 Normal sorting methods will output to a file/matplotlib
+
+
+//OLD CODE TO DRAW LINES INSTEAD OF RECT
+def draw_element_array(x, y, width, height):
+    global current_array
+    index = 1
+    for element in current_array:
+        #pygame.draw.line(display, black, (100 + (index * 2) , display_height - 50), ( 100 + (index * 2), element.line_length) , 1)
+        pygame.draw.line(display, black, (x + (index * 20) , y + height),
+         (x + (index * 20) , (y + height) - element.line_length * 30), 1)
+        pygame.display.update()
+        index = index + 1
