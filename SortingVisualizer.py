@@ -26,6 +26,11 @@ pause_UI = False
 original_array = []
 current_array = []
 
+# Arrays holding timestamps for sorting arrays. (each element increases array size by 10^n where 0>n>10)
+best_times = []
+avg_times = []
+worst_times = []
+
 display = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('Data Sorting Visualizer')
 start_time = time.time()
@@ -35,7 +40,6 @@ class line_element:
         self.line_length: 0
 
 def build_line_array(array_size):
-    #build an array of size / 2
     line_array = []
     for index in range(1, array_size):
         temp = line_element()
@@ -52,11 +56,8 @@ def insertion_sort():
         current_length = (current_array[index]).line_length
         checking_index = index - 1
         while checking_index >= 0 and (current_array[checking_index]).line_length > current_length:
-            #current_array[index], current_array[checking_index] = current_array[checking_index], current_array[index]
             current_array[checking_index + 1] = current_array[checking_index]
             checking_index = checking_index - 1
-            #draw_element_array()
-            #time.sleep(1)
         current_array[checking_index + 1] = current_element
     for x in range(len(current_array)):
         print(x)
@@ -76,6 +77,7 @@ def demo_insertion_sort():
             checking_index = checking_index - 1
             display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
             draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+            print("--- %s seconds ---" % (time.time() - start_time))
             time.sleep(.075)
         current_array[checking_index + 1] = current_element
     display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
@@ -115,9 +117,6 @@ def initial_build():
     current_array = element_array
     random.shuffle(element_array)
     draw_outline(visualizer_dim)
-#    draw_outline(left_dim)
-#    draw_outline(middle_dim)
-#    draw_outline(right_dim)
 
 def draw_outline(dimensions):
     x, y, width, height = dimensions[0], dimensions[1], dimensions[2], dimensions[3]
@@ -169,13 +168,11 @@ def draw_sort_buttons():
     pygame.draw.rect(display, black, (927,490,30,50))
     pygame.draw.rect(display, black, (967,460,30,80))
 
-
     draw_text(b1.x + (b1.width / 4), b1.y+ (b1.height / 3), "Insertion")
     draw_text(b2.x + (b2.width / 4), b2.y+ (b2.height / 3), "Selection")
     draw_text(b3.x + (b3.width / 4), b3.y+ (b3.height / 3), "Merge")
     draw_text(b4.x + (b4.width / 4), b4.y+ (b4.height / 3), "Quick")
     draw_text(b5.x + (b5.width / 4), b5.y+ (b5.height / 3), "Heap")
-
 
 def draw_text(x, y, text):
     pygame.font.init()
@@ -202,9 +199,6 @@ def main_loop():
     global current_array
     draw_sort_buttons()
     draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
-    #for i in range(len(element_array)):
-        #print(element_array[i].line_length)
-        #print(original_array[i].line_length)
 
     while not exit_request:
         for event in pygame.event.get():
