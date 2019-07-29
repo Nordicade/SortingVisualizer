@@ -65,6 +65,7 @@ def insertion_sort():
 def demo_insertion_sort():
     global pause_UI
     global current_array
+    global visualizer_dim
     for index in range(1, len(current_array)):
         current_element = current_array[index]
         current_length = (current_array[index]).line_length
@@ -73,11 +74,12 @@ def demo_insertion_sort():
             #current_array[index], current_array[checking_index] = current_array[checking_index], current_array[index]
             current_array[checking_index + 1] = current_array[checking_index]
             checking_index = checking_index - 1
-            draw_element_array()
-            print("adjustment")
-            time.sleep(1)
+            display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+            draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+            time.sleep(.075)
         current_array[checking_index + 1] = current_element
-    draw_element_array()
+    display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+    draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
 
 def selection_sort():
     print("selection")
@@ -184,7 +186,7 @@ def draw_text(x, y, text):
 def sorting_switch(integer):
     print(integer)
     switcher = {
-    1: insertion_sort,
+    1: demo_insertion_sort,
     2: selection_sort,
     3: merge_sort,
     4: quick_sort,
@@ -197,8 +199,9 @@ def main_loop():
     exit_request = False
     global pause_UI
     global sorting_algo
+    global current_array
     draw_sort_buttons()
-
+    draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
     #for i in range(len(element_array)):
         #print(element_array[i].line_length)
         #print(original_array[i].line_length)
@@ -238,8 +241,16 @@ def main_loop():
                 if pygame.mouse.get_pos()[1]  >= 450 and pygame.mouse.get_pos()[1] < 550:
                     if pygame.mouse.get_pos()[0] >= 171 and pygame.mouse.get_pos()[0] < 342:
                         print("example button for play")
+                        pause_UI = True
+                        sorting_switch(sorting_algo)
+                        pause_UI = False
                     if pygame.mouse.get_pos()[0] >= 513 and pygame.mouse.get_pos()[0] < 684:
                         print("example button for restart")
+                        new_array = build_line_array(20)
+                        random.shuffle(new_array)
+                        current_array = new_array
+                        display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+                        draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
                     if pygame.mouse.get_pos()[0] >= 855 and pygame.mouse.get_pos()[0] < 1026:
                         print("example button for stats")
             if event.type == pygame.KEYDOWN and pause_UI == False:
