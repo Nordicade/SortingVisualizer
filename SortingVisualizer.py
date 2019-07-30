@@ -21,6 +21,8 @@ middle_dim = 425,450,350,300
 right_dim = 800,450,350,300
 
 sorting_algo = 1
+visualizer_array_size = 21
+delay = .075
 pause_UI = False
 
 original_array = []
@@ -67,6 +69,7 @@ def demo_insertion_sort():
     global pause_UI
     global current_array
     global visualizer_dim
+    global delay
     for index in range(1, len(current_array)):
         current_element = current_array[index]
         current_length = (current_array[index]).line_length
@@ -77,8 +80,10 @@ def demo_insertion_sort():
             checking_index = checking_index - 1
             display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
             draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
-            print("--- %s seconds ---" % (time.time() - start_time))
-            time.sleep(.075)
+            #print("--- %s seconds ---" % (time.time() - start_time))
+            time.sleep(delay)
+            #display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+            #draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
         current_array[checking_index + 1] = current_element
     display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
     draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
@@ -99,20 +104,21 @@ def draw_element_array(x, y, width, height):
     adjustment_var = (width / (2 * len(current_array)))
     index = 1
     for element in current_array:
-        element_rect = pygame.Rect(x + (index * width_var), y + height, width / 20, (height_var * element.line_length))
+        element_rect = pygame.Rect(x + (index * width_var), y + height, width / len(current_array), (height_var * element.line_length))
         element_rect.midbottom = x + (index * width_var) - adjustment_var ,(y + height)
         pygame.draw.rect(display, black, element_rect, 1)
         pygame.display.update()
         index = index + 1
 
 def initial_build():
-    element_array = build_line_array(20)
     global original_array
     global current_array
     global visualizer_dim
     global left_dim
     global middle_dim
     global right_dim
+    global visualizer_array_size
+    element_array = build_line_array(visualizer_array_size)
     original_array = element_array.copy()
     current_array = element_array
     random.shuffle(element_array)
@@ -197,6 +203,7 @@ def main_loop():
     global pause_UI
     global sorting_algo
     global current_array
+    global visualizer_array_size
     draw_sort_buttons()
     draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
 
@@ -240,19 +247,19 @@ def main_loop():
                         pause_UI = False
                     if pygame.mouse.get_pos()[0] >= 513 and pygame.mouse.get_pos()[0] < 684:
                         print("example button for restart")
-                        new_array = build_line_array(20)
+                        new_array = build_line_array(visualizer_array_size)
                         random.shuffle(new_array)
                         current_array = new_array
                         display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
                         draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
                     if pygame.mouse.get_pos()[0] >= 855 and pygame.mouse.get_pos()[0] < 1026:
                         print("example button for stats")
-            if event.type == pygame.KEYDOWN and pause_UI == False:
-                if pygame.key.get_pressed()[pygame.K_SPACE]:
-                    print("space")
-                    pause_UI = True
-                    sorting_switch(sorting_algo)
-                    pause_UI = False
+            #if event.type == pygame.KEYDOWN and pause_UI == False:
+            #    if pygame.key.get_pressed()[pygame.K_SPACE]:
+            #        print("space")
+            #        pause_UI = True
+            #        sorting_switch(sorting_algo)
+            #        pause_UI = False
         pygame.display.update()
 
         print("--- %s seconds ---" % (time.time() - start_time))
