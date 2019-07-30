@@ -3,6 +3,7 @@
 #
 import pygame
 import time
+import math
 import random
 import matplotlib.pyplot as plt
 
@@ -22,6 +23,7 @@ right_dim = 800,450,350,300
 
 sorting_algo = 1
 visualizer_array_size = 21
+n_factor = 6
 delay = .075
 pause_UI = False
 
@@ -49,21 +51,15 @@ def build_line_array(array_size):
         line_array.append(temp)
     return line_array
 
-def insertion_sort():
-    global pause_UI
-    global current_array
-    global visualizer_dim
-    for index in range(len(current_array)):
-        current_element = current_array[index]
-        current_length = (current_array[index]).line_length
+def insertion_sort(unsorted_array):
+    for index in range(len(unsorted_array)):
+        current_element = unsorted_array[index]
         checking_index = index - 1
-        while checking_index >= 0 and (current_array[checking_index]).line_length > current_length:
-            current_array[checking_index + 1] = current_array[checking_index]
+        while checking_index >= 0 and (unsorted_array[checking_index]) > current_element:
+            unsorted_array[checking_index + 1] = unsorted_array[checking_index]
             checking_index = checking_index - 1
-        current_array[checking_index + 1] = current_element
-    for x in range(len(current_array)):
-        print(x)
-    draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+        unsorted_array[checking_index + 1] = current_element
+    return unsorted_array
 
 def demo_insertion_sort():
     global pause_UI
@@ -133,6 +129,40 @@ def text_objects(text, font):
     textSurface = font.render(text, True, black)
     return textSurface, textSurface.get_rect()
 
+def retrieve_best_case(array_size):
+    global sorting_algo
+    best_case_array = []
+    if(sorting_algo == 1):
+        for value in range(array_size):
+            best_case_array.append(value)
+        return best_case_array
+
+def retrieve_worst_case(array_size):
+    global sorting_algo
+    worst_case_array = []
+    if(sorting_algo == 1):
+        for value in range(array_size):
+            worst_case_array.insert(0,value)
+        return worst_case_array
+
+def retrieve_avg_case(array_size):
+    average_case_array = []
+    for value in range(array_size):
+        average_case_array.append(value)
+    random.shuffle(average_case_array)
+    return average_case_array
+
+def sorting_switch(integer):
+    print(integer)
+    switcher = {
+    1: demo_insertion_sort,
+    2: selection_sort,
+    3: merge_sort,
+    4: quick_sort,
+    5: heap_sort,
+    }
+    switcher[integer]()
+
 def draw_sort_buttons():
     b1 = pygame.Rect(0,0,(display_width /5) * 1, 100)
     b2 = pygame.Rect((display_width /5) * 1,0,(display_width /5) * 1, 100)
@@ -186,16 +216,22 @@ def draw_text(x, y, text):
     text_surface = small_text.render(text, True, black)
     display.blit(text_surface, (x, y))
 
-def sorting_switch(integer):
-    print(integer)
-    switcher = {
-    1: demo_insertion_sort,
-    2: selection_sort,
-    3: merge_sort,
-    4: quick_sort,
-    5: heap_sort,
-    }
-    switcher[integer]()
+def record_sorting_time(unsorted_array, case):
+    global sorting_algo
+    global worst_times
+    global avg_times
+    global best_times
+    if(sorting_algo == 1):
+        sort_time_start = time.time() - start_time
+        insertion_sort(unsorted_array)
+        sort_time_end = time.time() - start_time
+        print(str(sort_time_start) + " -> " + str(sort_time_end))
+        if(case == 0):
+            worst_times.append(sort_time_end - sort_time_start)
+        elif(case == 1):
+            avg_times.append(sort_time_end - sort_time_start)
+        else:
+            best_times.append(sort_time_end - sort_time_start)
 
 def main_loop():
 
@@ -203,7 +239,12 @@ def main_loop():
     global pause_UI
     global sorting_algo
     global current_array
+    global n_factor
     global visualizer_array_size
+    global worst_times
+    global avg_times
+    global best_times
+
     draw_sort_buttons()
     draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
 
@@ -254,12 +295,30 @@ def main_loop():
                         draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
                     if pygame.mouse.get_pos()[0] >= 855 and pygame.mouse.get_pos()[0] < 1026:
                         print("example button for stats")
-            #if event.type == pygame.KEYDOWN and pause_UI == False:
-            #    if pygame.key.get_pressed()[pygame.K_SPACE]:
-            #        print("space")
-            #        pause_UI = True
-            #        sorting_switch(sorting_algo)
-            #        pause_UI = False
+                        print("best case")
+                        for index in range(1,n_factor):
+#                            best_case = retrieve_best_case(int(math.pow(10,index)))
+#                            worst_case = retrieve_worst_case(int(math.pow(10,index)))
+#                            avg_case = retrieve_avg_case(int(math.pow(10,index)))
+                            best_case = retrieve_best_case(int(100 * index))
+                            worst_case = retrieve_worst_case(int(100 * index))
+                            avg_case = retrieve_avg_case(int(100 * index))
+                            print("begin sorting time methods for array size " + str(math.pow(10,index)) + " " + str(len(best_case)))
+                            record_sorting_time(best_case, 2)
+                            record_sorting_time(avg_case, 1)
+                            record_sorting_time(worst_case, 0)
+                            print("best at " + str(index)+ " " + str(best_times[index-1]))
+                            print("avg at " + str(index)+ " " +  str(avg_times[index-1]))
+                            print("worst at " + str(index)+ " " +  str(worst_times[index-1]))
+                            #best_case = []
+                            #worst_case = []
+                            #avg_case = []
+                        quit()
+#                        for index in range(len(best_case)):
+#                            print("best at" + str(index)+ " " + str(best_case[index]))
+#                            print("worst at" + str(index)+ " " + str(worst_case[index]))
+#                            print("avg at" + str(index) + " " + str(avg_case[index]))
+
         pygame.display.update()
 
         print("--- %s seconds ---" % (time.time() - start_time))
