@@ -15,6 +15,8 @@ display_height = 600
 black = (0,0,0)
 gray = (214,214,214, 1)
 white = (255,255,255)
+red = (255, 0 , 0)
+blue = (0, 0, 255)
 
 visualizer_dim = 50,125,1100,300
 left_dim = 50,450,350,300
@@ -22,9 +24,9 @@ middle_dim = 425,450,350,300
 right_dim = 800,450,350,300
 
 sorting_algo = 1
-visualizer_array_size = 21
-n_factor = 6
-delay = .075
+visualizer_array_size = 5
+n_factor = 10
+delay = 2.3
 pause_UI = False
 trial_count = 5
 
@@ -68,22 +70,44 @@ def demo_insertion_sort():
     global visualizer_dim
     global delay
     for index in range(1, len(current_array)):
+        # select first element to be index
         current_element = current_array[index]
         current_length = (current_array[index]).line_length
         checking_index = index - 1
+        draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3],
+        index, checking_index)
+        draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+        print("A")
+        time.sleep(delay)
+        display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+        # compare the index with the element that came before index
         while checking_index >= 0 and (current_array[checking_index]).line_length > current_length:
-            #current_array[index], current_array[checking_index] = current_array[checking_index], current_array[index]
+            draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3],
+            index + 1, checking_index + 1)
+            draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+            print("B - works, but jumps to find correct spot, leaving old copy")
+            time.sleep(delay)
+            display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+            # if a swap is needed, keep shifting and overwriting elements until correct spot is found
             current_array[checking_index + 1] = current_array[checking_index]
             checking_index = checking_index - 1
-            display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
-            draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
-            #print("--- %s seconds ---" % (time.time() - start_time))
-            time.sleep(delay)
+            #draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3],
+            #index + 1, checking_index + 1)
+            #draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+            #print("Leave in?")
+            #time.sleep(delay)
             #display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
-            #draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
         current_array[checking_index + 1] = current_element
+        draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3],
+        index, index + 1)
+        draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+        print("C - this shows that the index and check_index swap")
+        time.sleep(delay)
+        display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
     display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
     draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+    draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+    print("E")
 
 def selection_sort():
     print("selection")
@@ -103,7 +127,29 @@ def draw_element_array(x, y, width, height):
     for element in current_array:
         element_rect = pygame.Rect(x + (index * width_var), y + height, width / len(current_array), (height_var * element.line_length))
         element_rect.midbottom = x + (index * width_var) - adjustment_var ,(y + height)
-        pygame.draw.rect(display, black, element_rect, 1)
+        pygame.draw.rect(display, black, element_rect, 3)
+        pygame.display.update()
+        index = index + 1
+
+def draw_element_array_comparison(x, y, width, height, comparison_a, comparison_b):
+    global current_array
+    width_var = (width / len(current_array))
+    height_var = (height/ len(current_array))
+    adjustment_var = (width / (2 * len(current_array)))
+    index = 1
+    for element in current_array:
+        if index == comparison_a:
+            element_rect = pygame.Rect(x + (index * width_var), y + height, width / len(current_array), (height_var * element.line_length))
+            element_rect.midbottom = x + (index * width_var) - adjustment_var ,(y + height)
+            pygame.draw.rect(display, blue, element_rect, 0)
+        elif index == comparison_b:
+            element_rect = pygame.Rect(x + (index * width_var), y + height, width / len(current_array), (height_var * element.line_length))
+            element_rect.midbottom = x + (index * width_var) - adjustment_var ,(y + height)
+            pygame.draw.rect(display, red, element_rect, 0)
+        else:
+            element_rect = pygame.Rect(x + (index * width_var), y + height, width / len(current_array), (height_var * element.line_length))
+            element_rect.midbottom = x + (index * width_var) - adjustment_var ,(y + height)
+            pygame.draw.rect(display, black, element_rect, 3)
         pygame.display.update()
         index = index + 1
 
@@ -124,7 +170,7 @@ def initial_build():
 def draw_outline(dimensions):
     x, y, width, height = dimensions[0], dimensions[1], dimensions[2], dimensions[3]
     rectangle = [(x,y) , (x + width, y), (x+width , y+height), (x , y+height)]
-    pygame.draw.lines(display, black,True,rectangle, 1)
+    pygame.draw.lines(display, black,True,rectangle, 3)
 
 def text_objects(text, font):
     textSurface = font.render(text, True, black)
@@ -235,7 +281,6 @@ def record_sorting_time(unsorted_array, case):
 
 def main_loop():
 
-    exit_request = False
     global pause_UI
     global sorting_algo
     global current_array
@@ -245,7 +290,8 @@ def main_loop():
     global worst_times
     global avg_times
     global best_times
-
+    exit_request = False
+    x = []
     draw_sort_buttons()
     draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
 
@@ -302,6 +348,7 @@ def main_loop():
                             best_case = retrieve_best_case(int(1000 * index))
                             worst_case = retrieve_worst_case(int(1000 * index))
                             avg_case = retrieve_avg_case(int(1000 * index))
+                            x.append(int(1000 * index))
                             # run test on the same sized array x number of times (where x = trial_count)
                             for trial in range(trial_count):
                                 record_sorting_time(best_case, 2)
@@ -330,6 +377,27 @@ def main_loop():
                             print("avg at " + str(index)+ " " +  str(avg_times[print_val - 1]))
                             print("worst at " + str(index)+ " " +  str(worst_times[print_val - 1]))
 
+
+
+
+                        plt.plot(x, best_times, label = "Best case")
+                        plt.plot(x, avg_times, label = "Average case")
+                        plt.plot(x, worst_times, label = "Worst case")
+
+                        plt.xlabel("Elements within list")
+                        plt.ylabel("Time elapsed in seconds")
+                        plt.legend()
+                        if(sorting_algo == 1):
+                            plt.title("Complexity of Insertion Sort")
+                        if(sorting_algo == 2):
+                            plt.title("Complexity of Selection Sort")
+                        if(sorting_algo == 3):
+                            plt.title("Complexity of Merge Sort")
+                        if(sorting_algo == 4):
+                            plt.title("Complexity of Quick Sort")
+                        if(sorting_algo == 5):
+                            plt.title("Complexity of Heap Sort")
+                        plt.show()
         pygame.display.update()
 
         print("--- %s seconds ---" % (time.time() - start_time))
