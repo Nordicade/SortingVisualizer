@@ -5,10 +5,14 @@ TODO:
 add text and highlighted versions of play, reset, and data buttons
 tie events to buttons
 
-setup demo sorting
+calculate the average running time for each sort of the same size
+(ie, run the sort on array of size 100, 5 times, and average these times before plotting)
+
+convert global variables into parameters
 
 Bugs:
-Program closes after running draw_element_array() because it is missing dimension paramters
+last iteration of worst is considerably longer than the rest?
+
 
 NOTES:
 When checking when to update display, only update graph areas.
@@ -22,13 +26,9 @@ Sorting Demos will draw each step to the screen.
 Normal sorting methods will output to a file/matplotlib
 
 
-//OLD CODE TO DRAW LINES INSTEAD OF RECT
-def draw_element_array(x, y, width, height):
-    global current_array
-    index = 1
-    for element in current_array:
-        #pygame.draw.line(display, black, (100 + (index * 2) , display_height - 50), ( 100 + (index * 2), element.line_length) , 1)
-        pygame.draw.line(display, black, (x + (index * 20) , y + height),
-         (x + (index * 20) , (y + height) - element.line_length * 30), 1)
-        pygame.display.update()
-        index = index + 1
+            #if event.type == pygame.KEYDOWN and pause_UI == False:
+            #    if pygame.key.get_pressed()[pygame.K_SPACE]:
+            #        print("space")
+            #        pause_UI = True
+            #        sorting_switch(sorting_algo)
+            #        pause_UI = False

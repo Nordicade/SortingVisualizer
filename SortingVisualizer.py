@@ -26,6 +26,7 @@ visualizer_array_size = 21
 n_factor = 6
 delay = .075
 pause_UI = False
+trial_count = 5
 
 original_array = []
 current_array = []
@@ -225,7 +226,6 @@ def record_sorting_time(unsorted_array, case):
         sort_time_start = time.time() - start_time
         insertion_sort(unsorted_array)
         sort_time_end = time.time() - start_time
-        print(str(sort_time_start) + " -> " + str(sort_time_end))
         if(case == 0):
             worst_times.append(sort_time_end - sort_time_start)
         elif(case == 1):
@@ -240,6 +240,7 @@ def main_loop():
     global sorting_algo
     global current_array
     global n_factor
+    global trial_count
     global visualizer_array_size
     global worst_times
     global avg_times
@@ -296,28 +297,38 @@ def main_loop():
                     if pygame.mouse.get_pos()[0] >= 855 and pygame.mouse.get_pos()[0] < 1026:
                         print("example button for stats")
                         print("best case")
-                        for index in range(1,n_factor):
-#                            best_case = retrieve_best_case(int(math.pow(10,index)))
-#                            worst_case = retrieve_worst_case(int(math.pow(10,index)))
-#                            avg_case = retrieve_avg_case(int(math.pow(10,index)))
-                            best_case = retrieve_best_case(int(100 * index))
-                            worst_case = retrieve_worst_case(int(100 * index))
-                            avg_case = retrieve_avg_case(int(100 * index))
-                            print("begin sorting time methods for array size " + str(math.pow(10,index)) + " " + str(len(best_case)))
-                            record_sorting_time(best_case, 2)
-                            record_sorting_time(avg_case, 1)
-                            record_sorting_time(worst_case, 0)
-                            print("best at " + str(index)+ " " + str(best_times[index-1]))
-                            print("avg at " + str(index)+ " " +  str(avg_times[index-1]))
-                            print("worst at " + str(index)+ " " +  str(worst_times[index-1]))
-                            #best_case = []
-                            #worst_case = []
-                            #avg_case = []
-                        quit()
-#                        for index in range(len(best_case)):
-#                            print("best at" + str(index)+ " " + str(best_case[index]))
-#                            print("worst at" + str(index)+ " " + str(worst_case[index]))
-#                            print("avg at" + str(index) + " " + str(avg_case[index]))
+                        # find time cost for sorting arrays of increasing size (max size determined by n_factor)
+                        for index in range(n_factor):
+                            best_case = retrieve_best_case(int(1000 * index))
+                            worst_case = retrieve_worst_case(int(1000 * index))
+                            avg_case = retrieve_avg_case(int(1000 * index))
+                            # run test on the same sized array x number of times (where x = trial_count)
+                            for trial in range(trial_count):
+                                record_sorting_time(best_case, 2)
+                                record_sorting_time(avg_case, 1)
+                                record_sorting_time(worst_case, 0)
+                                # remove all time trials for same sized array and replace with 1 average time
+                                if len(best_times) == index + trial_count:
+                                    sum_time = 0
+                                    for sum_count in range(trial_count):
+                                        removed_element = best_times.pop(-1)
+                                        sum_time = sum_time + removed_element
+                                    best_times.append(sum_time / trial_count)
+                                    sum_time = 0
+                                    for sum_count in range(trial_count):
+                                        removed_element = avg_times.pop(-1)
+                                        sum_time = sum_time + removed_element
+                                    avg_times.append(sum_time / trial_count)
+                                    sum_time = 0
+                                    for sum_count in range(trial_count):
+                                        removed_element = worst_times.pop(-1)
+                                        #print("worst: " + str(removed_element))
+                                        sum_time = sum_time + removed_element
+                                    worst_times.append(sum_time / trial_count)
+                            print_val = len(best_times)
+                            print("best at " + str(index)+ " " + str(best_times[print_val - 1]))
+                            print("avg at " + str(index)+ " " +  str(avg_times[print_val - 1]))
+                            print("worst at " + str(index)+ " " +  str(worst_times[print_val - 1]))
 
         pygame.display.update()
 
