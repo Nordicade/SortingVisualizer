@@ -10,6 +10,8 @@ calculate the average running time for each sort of the same size
 
 convert global variables into parameters
 
+VERIFY THAT EACH TIME TRIAL IS ACTUALLY SORTING THE SAME RANDOM ARRAY. THERE IS A POSSIBILITY ARRAY IS SORTED 1ST CALL AND THEN REPEATED ON SAME SORTED ARRAY FOR TEH 4 REMAINING TRIALS
+
 Bugs:
 last iteration of worst is considerably longer than the rest?
 
@@ -32,3 +34,11 @@ Normal sorting methods will output to a file/matplotlib
             #        pause_UI = True
             #        sorting_switch(sorting_algo)
             #        pause_UI = False
+
+
+        #draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3],
+        #index, checking_index)
+        #draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+        #print("A")
+        #time.sleep(delay)
+        #display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
