@@ -24,9 +24,9 @@ middle_dim = 425,450,350,300
 right_dim = 800,450,350,300
 
 sorting_algo = 1
-visualizer_array_size = 5
-n_factor = 10
-delay = 2.3
+visualizer_array_size = 21
+n_factor = 6
+delay = .3
 pause_UI = False
 trial_count = 5
 
@@ -65,7 +65,6 @@ def insertion_sort(unsorted_array):
     return unsorted_array
 
 def demo_insertion_sort():
-    global pause_UI
     global current_array
     global visualizer_dim
     global delay
@@ -74,48 +73,85 @@ def demo_insertion_sort():
         current_element = current_array[index]
         current_length = (current_array[index]).line_length
         checking_index = index - 1
-        draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3],
-        index, checking_index)
-        draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
-        print("A")
-        time.sleep(delay)
-        display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
         # compare the index with the element that came before index
         while checking_index >= 0 and (current_array[checking_index]).line_length > current_length:
-            draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3],
-            index + 1, checking_index + 1)
+            draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
             draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
-            print("B - works, but jumps to find correct spot, leaving old copy")
             time.sleep(delay)
             display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
             # if a swap is needed, keep shifting and overwriting elements until correct spot is found
             current_array[checking_index + 1] = current_array[checking_index]
             checking_index = checking_index - 1
-            #draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3],
-            #index + 1, checking_index + 1)
-            #draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
-            #print("Leave in?")
-            #time.sleep(delay)
-            #display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
         current_array[checking_index + 1] = current_element
-        draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3],
-        index, index + 1)
-        draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
-        print("C - this shows that the index and check_index swap")
-        time.sleep(delay)
-        display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
     display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
     draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
     draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
-    print("E")
 
-def selection_sort():
-    print("selection")
-def quick_sort():
+def selection_sort(unsorted_array):
+    for sorting_index in range(len(unsorted_array)):
+        min_index = sorting_index
+        for unsorted_index in range(sorting_index+1, len(unsorted_array)):
+            if unsorted_array[min_index] > unsorted_array[unsorted_index]:
+                # set as current_min and proceed looking throughout list
+                min_index = unsorted_index
+        #swap current index with current min
+        temp = unsorted_array[sorting_index]
+        unsorted_array[sorting_index] = unsorted_array[min_index]
+        unsorted_array[min_index] = temp
+
+def demo_selection_sort():
+    global current_array
+    global visualizer_dim
+    global delay
+
+    for sorting_index in range(len(current_array)):
+        min_index = sorting_index
+        for unsorted_index in range(sorting_index+1, len(current_array)):
+            if current_array[min_index].line_length > current_array[unsorted_index].line_length:
+                # set as current_min and proceed looking throughout list
+                min_index = unsorted_index
+        #swap current index with current min
+        temp = current_array[sorting_index]
+        current_array[sorting_index] = current_array[min_index]
+        current_array[min_index] = temp
+        #draw changes to display and sleep for desired delay
+        display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+        draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+        draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+        time.sleep(delay)
+
+def quick_sort(unsorted_array):
+    #pick a pivot point using median of 3, sorting first,middle, and last element in the process
+    left_index, right_index, middle_index = 0, len(unsorted_array) - 1, int((len(unsorted_array))/2)
+    pivot = median_of_three(unsorted_array, left_index, right_index, middle_index)
+    print("L: "+str(unsorted_array[left_index]) +" Piv: "+str(pivot)+" R: "+str(unsorted_array[right_index]) )
+
+def median_of_three(unsorted_array, left_index, right_index, middle_index):
+    #pick a pivot point using median of 3, sorting first,middle, and last element in the process
+    if unsorted_array[right_index] < unsorted_array[left_index]:
+        temp = unsorted_array[left_index]
+        unsorted_array[left_index] = unsorted_array[right_index]
+        unsorted_array[right_index] = temp
+    if unsorted_array[middle_index] < unsorted_array[left_index]:
+        temp = unsorted_array[left_index]
+        unsorted_array[left_index] = unsorted_array[middle_index]
+        unsorted_array[middle_index] = temp
+    if unsorted_array[right_index] < unsorted_array[middle_index]:
+        temp = unsorted_array[middle_index]
+        unsorted_array[middle_index] = unsorted_array[right_index]
+        unsorted_array[right_index] = temp
+    pivot = unsorted_array[middle_index]
+    return pivot
+
+def demo_quick_sort():
     print("quick")
 def merge_sort():
     print("merge")
+def demo_merge_sort():
+    print("merge")
 def heap_sort():
+    print("heap")
+def demo_heap_sort():
     print("heap")
 
 def draw_element_array(x, y, width, height):
@@ -180,6 +216,17 @@ def retrieve_best_case(array_size):
     global sorting_algo
     best_case_array = []
     if(sorting_algo == 1):
+        #best case for insertion sort is a fully sorted array
+        for value in range(array_size):
+            best_case_array.append(value)
+        return best_case_array
+    if(sorting_algo == 2):
+        #best case for selection sort is same as worst case, but without swaps. so also sorted.
+        for value in range(array_size):
+            best_case_array.append(value)
+        return best_case_array
+    if(sorting_algo == 4):
+        #best case for quick sort is a sorted array (pivot will be 50)
         for value in range(array_size):
             best_case_array.append(value)
         return best_case_array
@@ -188,8 +235,23 @@ def retrieve_worst_case(array_size):
     global sorting_algo
     worst_case_array = []
     if(sorting_algo == 1):
+        #worst case for insertion sort is a inversely sorted array
         for value in range(array_size):
             worst_case_array.insert(0,value)
+        return worst_case_array
+    if(sorting_algo == 2):
+        #worst case for selection sort is same as best case, but with swaps. so also inversely sorted.
+        for value in range(array_size):
+            worst_case_array.insert(0,value)
+        return worst_case_array
+    if(sorting_algo == 4):
+        #worst case for quick sort is when Mo3 pivot is second-largest/second-smallest and inversely sorted
+        for value in range(array_size):
+            worst_case_array.insert(0,value)
+        temp = worst_case_array[0]
+        worst_case_array[0] = worst_case_array[array_size - 2]
+        worst_case_array[array_size - 2] = temp
+        #array looks like [1,998, 997, ... , 3, 2, 999, 0]. Pivot will be [1,500, 0], setting 1 as pivot
         return worst_case_array
 
 def retrieve_avg_case(array_size):
@@ -200,13 +262,13 @@ def retrieve_avg_case(array_size):
     return average_case_array
 
 def sorting_switch(integer):
-    print(integer)
+    #print(integer)
     switcher = {
     1: demo_insertion_sort,
-    2: selection_sort,
-    3: merge_sort,
-    4: quick_sort,
-    5: heap_sort,
+    2: demo_selection_sort,
+    3: demo_merge_sort,
+    4: demo_quick_sort,
+    5: demo_heap_sort,
     }
     switcher[integer]()
 
@@ -278,6 +340,26 @@ def record_sorting_time(unsorted_array, case):
             avg_times.append(sort_time_end - sort_time_start)
         else:
             best_times.append(sort_time_end - sort_time_start)
+    if(sorting_algo == 2):
+        sort_time_start = time.time() - start_time
+        selection_sort(unsorted_array)
+        sort_time_end = time.time() - start_time
+        if(case == 0):
+            worst_times.append(sort_time_end - sort_time_start)
+        elif(case == 1):
+            avg_times.append(sort_time_end - sort_time_start)
+        else:
+            best_times.append(sort_time_end - sort_time_start)
+    if(sorting_algo == 4):
+        sort_time_start = time.time() - start_time
+        quick_sort(unsorted_array)
+        sort_time_end = time.time() - start_time
+        if(case == 0):
+            worst_times.append(sort_time_end - sort_time_start)
+        elif(case == 1):
+            avg_times.append(sort_time_end - sort_time_start)
+        else:
+            best_times.append(sort_time_end - sort_time_start)
 
 def main_loop():
 
@@ -342,9 +424,8 @@ def main_loop():
                         draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
                     if pygame.mouse.get_pos()[0] >= 855 and pygame.mouse.get_pos()[0] < 1026:
                         print("example button for stats")
-                        print("best case")
                         # find time cost for sorting arrays of increasing size (max size determined by n_factor)
-                        for index in range(n_factor):
+                        for index in range(1, n_factor):
                             best_case = retrieve_best_case(int(1000 * index))
                             worst_case = retrieve_worst_case(int(1000 * index))
                             avg_case = retrieve_avg_case(int(1000 * index))
@@ -354,8 +435,9 @@ def main_loop():
                                 record_sorting_time(best_case, 2)
                                 record_sorting_time(avg_case, 1)
                                 record_sorting_time(worst_case, 0)
+                                quit()
                                 # remove all time trials for same sized array and replace with 1 average time
-                                if len(best_times) == index + trial_count:
+                                if len(best_times) == (index - 1) + trial_count:
                                     sum_time = 0
                                     for sum_count in range(trial_count):
                                         removed_element = best_times.pop(-1)
@@ -372,12 +454,12 @@ def main_loop():
                                         #print("worst: " + str(removed_element))
                                         sum_time = sum_time + removed_element
                                     worst_times.append(sum_time / trial_count)
+
                             print_val = len(best_times)
+                            print(print_val)
                             print("best at " + str(index)+ " " + str(best_times[print_val - 1]))
                             print("avg at " + str(index)+ " " +  str(avg_times[print_val - 1]))
                             print("worst at " + str(index)+ " " +  str(worst_times[print_val - 1]))
-
-
 
 
                         plt.plot(x, best_times, label = "Best case")
@@ -398,6 +480,10 @@ def main_loop():
                         if(sorting_algo == 5):
                             plt.title("Complexity of Heap Sort")
                         plt.show()
+                        best_times = []
+                        avg_times = []
+                        worst_times = []
+                        x = []
         pygame.display.update()
 
         print("--- %s seconds ---" % (time.time() - start_time))
