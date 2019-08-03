@@ -122,41 +122,38 @@ def demo_selection_sort():
 
 def quick_sort(unsorted_array):
     #initial quick sort call that calls the recursive function
-    quick_sort_recursive(unsorted_array, 0, len(unsorted_array))
+    quick_sort_recursive(unsorted_array, 0, len(unsorted_array) - 1)
 
 def quick_sort_recursive(unsorted_array, left_index, right_index):
-    result = 0
     if left_index < right_index:
-        pivot_index, result = quick_sort_partition(unsorted_array, left_index, right_index)
-        result += quick_sort_recursive(unsorted_array, left_index, pivot_index)
-        result += quick_sort_recursive(unsorted_array, pivot_index + 1, right_index)
-    return result
+        pivot_index = quick_sort_partition(unsorted_array, left_index, right_index)
+        quick_sort_recursive(unsorted_array, left_index, pivot_index)
+        quick_sort_recursive(unsorted_array, pivot_index + 1, right_index)
 
 def quick_sort_partition(unsorted_array, left_index, right_index):
     #pick a pivot point using median of 3, sorting first,middle, and last element in the process
-    result = 0
-    middle_index = int((left_index + (right_index - 1))/2)
-    pivot_index = median_of_three(unsorted_array, left_index, middle_index, right_index - 1)
-    print("L: "+str(unsorted_array[left_index]) +" Piv: "+str(pivot_index)+" R: "+str(unsorted_array[right_index - 1]))
+    middle_index = int((left_index + (right_index))/2)
+    pivot_index = median_of_three(unsorted_array, left_index, middle_index, right_index)
+    print("L: "+str(unsorted_array[left_index]) +" Piv: "+str(pivot_index)+" R: "+str(unsorted_array[right_index]))
     pivot_value = unsorted_array[pivot_index]
 
     #set pivot position at the beginning of array
-    swap(unsorted_array, middle_index, right_index - 1)
+    swap(unsorted_array, middle_index,left_index)
     #set low_compare to left+1 to skip over the pivot point
     low_compare = left_index + 1
     for high_compare in range(left_index + 1, right_index, 1):
-        result += 1
         if unsorted_array[high_compare] < pivot_value:
             swap(unsorted_array, low_compare, high_compare)
             low_compare += 1
     #then replace pivot with its true sorted spot
     swap(unsorted_array, left_index, low_compare - 1)
-    return low_compare - 1, result
+    return low_compare - 1
 
 def swap(array, left_index, right_index):
-    temp = array[left_index]
-    array[left_index] = array[right_index]
-    array[right_index] = temp
+    array[left_index], array[right_index] = array[right_index], array[left_index]
+#        temp = array[left_index]
+#        array[left_index] = array[right_index]
+#        array[right_index] = temp
 
 def median_of_three(unsorted_array, left_index, middle_index, right_index):
     #pick a pivot point using median of 3, sorting first,middle, and last element in the process
@@ -464,7 +461,6 @@ def main_loop():
                                 record_sorting_time(best_case, 2)
                                 record_sorting_time(avg_case, 1)
                                 record_sorting_time(worst_case, 0)
-
                                 # remove all time trials for same sized array and replace with 1 average time
                                 if len(best_times) == (index - 1) + trial_count:
                                     sum_time = 0
