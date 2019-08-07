@@ -25,10 +25,10 @@ right_dim = 800,450,350,300
 
 sorting_algo = 1
 visualizer_array_size = 21
-n_factor = 6
+n_factor = 12
 delay = .3
 pause_UI = False
-trial_count = 5
+trial_count = 15
 
 original_array = []
 current_array = []
@@ -120,54 +120,143 @@ def demo_selection_sort():
         draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
         time.sleep(delay)
 
+# BIG help from https://www.pythoncentral.io/quick-sort-implementation-guide/
+# This method is a clean method that takes in an unsorted array and sorts using median of 3 quick sort
 def quick_sort(unsorted_array):
     #initial quick sort call that calls the recursive function
     quick_sort_recursive(unsorted_array, 0, len(unsorted_array) - 1)
 
+# This method is called on repeat to divide the array into smaller chunks, finding new partitions each time
 def quick_sort_recursive(unsorted_array, left_index, right_index):
     if left_index < right_index:
+        # calls helper method to find partition, then calls this method for each sub-array (excluding pivot)
         pivot_index = quick_sort_partition(unsorted_array, left_index, right_index)
-        quick_sort_recursive(unsorted_array, left_index, pivot_index)
+        #print(str(left_index) + " and " + str(pivot_index - 1))
+        #print(len(unsorted_array))
+        quick_sort_recursive(unsorted_array, left_index, pivot_index - 1)
         quick_sort_recursive(unsorted_array, pivot_index + 1, right_index)
 
+#this method finds the true position of the pivot point and sets unordered smaller/larger elements on their respective sides
 def quick_sort_partition(unsorted_array, left_index, right_index):
     #pick a pivot point using median of 3, sorting first,middle, and last element in the process
-    middle_index = int((left_index + (right_index))/2)
+    middle_index = (left_index + (right_index)) //2
     pivot_index = median_of_three(unsorted_array, left_index, middle_index, right_index)
-    print("L: "+str(unsorted_array[left_index]) +" Piv: "+str(pivot_index)+" R: "+str(unsorted_array[right_index]))
     pivot_value = unsorted_array[pivot_index]
+    smaller = left_index + 1
+    larger = right_index
+    true_pivot_found = False
 
-    #set pivot position at the beginning of array
-    swap(unsorted_array, middle_index,left_index)
-    #set low_compare to left+1 to skip over the pivot point
-    low_compare = left_index + 1
-    for high_compare in range(left_index + 1, right_index, 1):
-        if unsorted_array[high_compare] < pivot_value:
-            swap(unsorted_array, low_compare, high_compare)
-            low_compare += 1
-    #then replace pivot with its true sorted spot
-    swap(unsorted_array, left_index, low_compare - 1)
-    return low_compare - 1
+    #SWAPPING PIVOT WITH LAST ELEMENT!
+    swap(unsorted_array, pivot_index,right_index)
 
+    while not true_pivot_found:
+        while smaller <= larger and unsorted_array[smaller] <= pivot_value:
+            smaller = smaller + 1
+        while smaller <= larger and unsorted_array[larger] >= pivot_value:
+            larger = larger - 1
+        if larger < smaller:
+            true_pivot_found = True
+        else:
+            swap(unsorted_array, smaller, larger)
+
+    #RESWAPPING PIVOT WITH LAST ELEMENT!
+    swap(unsorted_array, right_index, pivot_index)
+    return larger
+
+#helper method that performs the swap using a temp variable (imo cleaner than the # python swap)
 def swap(array, left_index, right_index):
-    array[left_index], array[right_index] = array[right_index], array[left_index]
-#        temp = array[left_index]
-#        array[left_index] = array[right_index]
-#        array[right_index] = temp
+#    array[left_index], array[right_index] = array[right_index], array[left_index]
+        temp = array[left_index]
+        array[left_index] = array[right_index]
+        array[right_index] = temp
 
+# Reads the first/center/last positioned elements within array, sorts the 3, and returns the median element
 def median_of_three(unsorted_array, left_index, middle_index, right_index):
-    #pick a pivot point using median of 3, sorting first,middle, and last element in the process
     if unsorted_array[right_index] < unsorted_array[left_index]:
         swap(unsorted_array, left_index, right_index)
     if unsorted_array[middle_index] < unsorted_array[left_index]:
         swap(unsorted_array, left_index, middle_index)
     if unsorted_array[right_index] < unsorted_array[middle_index]:
         swap(unsorted_array, middle_index, right_index)
-    pivot = unsorted_array[middle_index]
+    pivot = middle_index
+    #print("After: L: "+str(unsorted_array[left_index]) +" Mid: "+str(unsorted_array[middle_index])+" R: "+str(unsorted_array[right_index]))
     return pivot
 
 def demo_quick_sort():
-    print("quick")
+    global current_array
+    global visualizer_dim
+    global delay
+
+    display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+    draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+    draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+    time.sleep(delay)
+
+    demo_quick_sort_recursive(current_array, 0, len(current_array) - 1)
+
+    display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+    draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+    draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+    time.sleep(delay)
+
+def demo_quick_sort_recursive(unsorted_array, left_index, right_index):
+    if left_index < right_index:
+        # calls helper method to find partition, then calls this method for each sub-array (excluding pivot)
+        pivot_index = demo_quick_sort_partition(unsorted_array, left_index, right_index)
+        #print(str(left_index) + " and " + str(pivot_index - 1))
+        #print(len(unsorted_array))
+        display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+        draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+        draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+
+        time.sleep(delay)
+
+        demo_quick_sort_recursive(unsorted_array, left_index, pivot_index - 1)
+        demo_quick_sort_recursive(unsorted_array, pivot_index + 1, right_index)
+        #print("done")
+        #for n in range(len(current_array)):
+    #        print(current_array[n].line_length)
+    #    quit()
+
+#this method finds the true position of the pivot point and sets unordered smaller/larger elements on their respective sides
+def demo_quick_sort_partition(unsorted_array, left_index, right_index):
+    #pick a pivot point using median of 3, sorting first,middle, and last element in the process
+    middle_index = (left_index + (right_index)) //2
+    pivot_index = demo_median_of_three(unsorted_array, left_index, middle_index, right_index)
+    pivot_value = unsorted_array[pivot_index].line_length
+    smaller = left_index + 1
+    larger = right_index
+    true_pivot_found = False
+
+    #SWAPPING PIVOT WITH LAST ELEMENT!
+    swap(unsorted_array, pivot_index,right_index)
+
+    while not true_pivot_found:
+        while smaller <= larger and unsorted_array[smaller].line_length <= pivot_value:
+            smaller = smaller + 1
+        while smaller <= larger and unsorted_array[larger].line_length >= pivot_value:
+            larger = larger - 1
+        if larger < smaller:
+            true_pivot_found = True
+        else:
+            swap(unsorted_array, smaller, larger)
+
+    #RESWAPPING PIVOT WITH LAST ELEMENT!
+    swap(unsorted_array, right_index, pivot_index)
+    return larger
+
+# Reads the first/center/last positioned elements within array, sorts the 3, and returns the median element
+def demo_median_of_three(unsorted_array, left_index, middle_index, right_index):
+    if unsorted_array[right_index].line_length < unsorted_array[left_index].line_length:
+        swap(unsorted_array, left_index, right_index)
+    if unsorted_array[middle_index].line_length < unsorted_array[left_index].line_length:
+        swap(unsorted_array, left_index, middle_index)
+    if unsorted_array[right_index].line_length < unsorted_array[middle_index].line_length:
+        swap(unsorted_array, middle_index, right_index)
+    pivot = middle_index
+    #print("After: L: "+str(unsorted_array[left_index]) +" Mid: "+str(unsorted_array[middle_index])+" R: "+str(unsorted_array[right_index]))
+    return pivot
+
 def merge_sort():
     print("merge")
 def demo_merge_sort():
@@ -381,9 +470,6 @@ def record_sorting_time(unsorted_array, case):
             worst_times.append(sort_time_end - sort_time_start)
         elif(case == 1):
             avg_times.append(sort_time_end - sort_time_start)
-            for n in range(len(unsorted_array)):
-                print(unsorted_array[n])
-            quit()
         else:
             best_times.append(sort_time_end - sort_time_start)
 

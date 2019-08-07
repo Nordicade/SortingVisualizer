@@ -15,6 +15,24 @@ VERIFY THAT EACH TIME TRIAL IS ACTUALLY SORTING THE SAME RANDOM ARRAY. THERE IS 
 Bugs:
 last iteration of worst is considerably longer than the rest?
 
+Infinite recursion during the case :
+7
+10
+9
+12
+4
+14
+8
+5
+3
+13
+2
+1
+11
+6
+0
+as the random array
+
 
 NOTES:
 When checking when to update display, only update graph areas.
