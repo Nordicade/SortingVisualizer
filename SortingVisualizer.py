@@ -146,8 +146,8 @@ def quick_sort_partition(unsorted_array, left_index, right_index):
     larger = right_index
     true_pivot_found = False
 
-    #SWAPPING PIVOT WITH LAST ELEMENT!
-    swap(unsorted_array, pivot_index,right_index)
+    #SWAPPING PIVOT WITH FIRST ELEMENT!
+    swap(unsorted_array, pivot_index, left_index)
 
     while not true_pivot_found:
         while smaller <= larger and unsorted_array[smaller] <= pivot_value:
@@ -159,8 +159,8 @@ def quick_sort_partition(unsorted_array, left_index, right_index):
         else:
             swap(unsorted_array, smaller, larger)
 
-    #RESWAPPING PIVOT WITH LAST ELEMENT!
-    swap(unsorted_array, right_index, pivot_index)
+    #SWAPPING PIVOT WITH FIRST ELEMENT!
+    swap(unsorted_array, pivot_index, left_index)
     return larger
 
 #helper method that performs the swap using a temp variable (imo cleaner than the # python swap)
@@ -208,15 +208,13 @@ def demo_quick_sort_recursive(unsorted_array, left_index, right_index):
         display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
         draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
         draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
-
         time.sleep(delay)
 
         demo_quick_sort_recursive(unsorted_array, left_index, pivot_index - 1)
         demo_quick_sort_recursive(unsorted_array, pivot_index + 1, right_index)
-        #print("done")
-        #for n in range(len(current_array)):
+    #    print("done")
+    #    for n in range(len(current_array)):
     #        print(current_array[n].line_length)
-    #    quit()
 
 #this method finds the true position of the pivot point and sets unordered smaller/larger elements on their respective sides
 def demo_quick_sort_partition(unsorted_array, left_index, right_index):
@@ -228,8 +226,13 @@ def demo_quick_sort_partition(unsorted_array, left_index, right_index):
     larger = right_index
     true_pivot_found = False
 
-    #SWAPPING PIVOT WITH LAST ELEMENT!
-    swap(unsorted_array, pivot_index,right_index)
+    #SWAPPING PIVOT WITH FIRST ELEMENT!
+    swap(unsorted_array, pivot_index, left_index)
+
+    display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+    draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+    draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+    time.sleep(delay)
 
     while not true_pivot_found:
         while smaller <= larger and unsorted_array[smaller].line_length <= pivot_value:
@@ -240,9 +243,17 @@ def demo_quick_sort_partition(unsorted_array, left_index, right_index):
             true_pivot_found = True
         else:
             swap(unsorted_array, smaller, larger)
+            display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+            draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+            draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+            time.sleep(delay)
 
-    #RESWAPPING PIVOT WITH LAST ELEMENT!
-    swap(unsorted_array, right_index, pivot_index)
+    #RESWAPPING PIVOT WITH FIRST ELEMENT!
+    swap(unsorted_array, left_index, larger)
+    display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+    draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+    draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+    time.sleep(delay)
     return larger
 
 # Reads the first/center/last positioned elements within array, sorts the 3, and returns the median element
@@ -254,7 +265,8 @@ def demo_median_of_three(unsorted_array, left_index, middle_index, right_index):
     if unsorted_array[right_index].line_length < unsorted_array[middle_index].line_length:
         swap(unsorted_array, middle_index, right_index)
     pivot = middle_index
-    #print("After: L: "+str(unsorted_array[left_index]) +" Mid: "+str(unsorted_array[middle_index])+" R: "+str(unsorted_array[right_index]))
+    print("After: L: "+str(unsorted_array[left_index].line_length) +" Mid: "
+    +str(unsorted_array[middle_index].line_length)+" R: "+str(unsorted_array[right_index].line_length))
     return pivot
 
 def merge_sort():
