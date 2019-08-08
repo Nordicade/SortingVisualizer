@@ -277,8 +277,13 @@ def demo_median_of_three(unsorted_array, left_index, middle_index, right_index):
     +str(unsorted_array[middle_index].line_length)+" R: "+str(unsorted_array[right_index].line_length))
     return pivot
 
-def merge_sort():
+def merge_sort(unsorted_array):
     print("merge")
+
+
+
+
+
 def demo_merge_sort():
     print("merge")
 def heap_sort():
@@ -377,10 +382,20 @@ def retrieve_worst_case(array_size):
             worst_case_array.insert(0,value)
         return worst_case_array
     if(sorting_algo == 4):
-        #current worst case is just reverse order, but it really isn't the worst case
+        #current worst case is when median of three pivot is the second to smallest/largest elements
         for value in range(array_size):
-            worst_case_array.insert(0,value)
-
+            worst_case_array.append(value)
+        #for value in range(len(worst_case_array)):
+        #    print(worst_case_array[value])
+        left, right, = 0, len(worst_case_array) - 1
+        middle = right - left // 2
+        while(right - left >= 4):
+            #swap middle element with second to first
+            swap(worst_case_array, middle, left + 1)
+            left = left + 2
+            middle = right - left // 2
+        #for value in range(len(worst_case_array)):
+        #    print(worst_case_array[value])
         return worst_case_array
 
 def retrieve_avg_case(array_size):
@@ -479,6 +494,16 @@ def record_sorting_time(unsorted_array, case):
             avg_times.append(sort_time_end - sort_time_start)
         else:
             best_times.append(sort_time_end - sort_time_start)
+    if(sorting_algo == 3):
+        sort_time_start = time.time() - start_time
+        merge_sort(unsorted_array)
+        sort_time_end = time.time() - start_time
+        if(case == 0):
+            worst_times.append(sort_time_end - sort_time_start)
+        elif(case == 1):
+            avg_times.append(sort_time_end - sort_time_start)
+        else:
+            best_times.append(sort_time_end - sort_time_start)
     if(sorting_algo == 4):
         sort_time_start = time.time() - start_time
         quick_sort(unsorted_array)
@@ -559,13 +584,11 @@ def main_loop():
                             worst_case = retrieve_worst_case(int(math.pow(10, index)))
                             avg_case = retrieve_avg_case(int(math.pow(10, index))) #int(1000 * index)
                             x.append(int(math.pow(10, index)))
-                            print("should be size: " + str(math.pow(10,index)))
                             # run test on the same sized array x number of times (where x = trial_count)
                             for trial in range(trial_count):
                                 record_sorting_time(best_case, 2)
                                 record_sorting_time(avg_case, 1)
                                 record_sorting_time(worst_case, 0)
-                                print("actual size: " + str(len(best_case)))
                                 # remove all time trials for same sized array and replace with 1 average time
                                 if len(best_times) == (index - 1) + trial_count:
                                     sum_time = 0
@@ -573,6 +596,7 @@ def main_loop():
                                         removed_element = best_times.pop(-1)
                                         sum_time = sum_time + removed_element
                                     best_times.append(sum_time / trial_count)
+                                    print("length after trials" + str(len(best_times)))
                                     sum_time = 0
                                     for sum_count in range(trial_count):
                                         removed_element = avg_times.pop(-1)
@@ -590,8 +614,8 @@ def main_loop():
                             print("best at " + str(index)+ " " + str(best_times[print_val - 1]))
                             print("avg at " + str(index)+ " " +  str(avg_times[print_val - 1]))
                             print("worst at " + str(index)+ " " +  str(worst_times[print_val - 1]))
-
-
+                        print(len(x))
+                        print(len(best_times))
                         plt.plot(x, best_times, label = "Best case")
                         plt.plot(x, avg_times, label = "Average case")
                         plt.plot(x, worst_times, label = "Worst case")
