@@ -24,11 +24,11 @@ middle_dim = 425,450,350,300
 right_dim = 800,450,350,300
 
 sorting_algo = 1
-visualizer_array_size = 21
-n_factor = 12
-delay = .3
+visualizer_array_size = 50
+n_factor = 7
+delay = .1
 pause_UI = False
-trial_count = 15
+trial_count = 3
 
 original_array = []
 current_array = []
@@ -145,7 +145,6 @@ def quick_sort_partition(unsorted_array, left_index, right_index):
     smaller = left_index + 1
     larger = right_index
     true_pivot_found = False
-
     #SWAPPING PIVOT WITH FIRST ELEMENT!
     swap(unsorted_array, pivot_index, left_index)
 
@@ -230,7 +229,8 @@ def demo_quick_sort_partition(unsorted_array, left_index, right_index):
     swap(unsorted_array, pivot_index, left_index)
 
     display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
-    draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+    #draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+    draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], pivot_index, pivot_index)
     draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
     time.sleep(delay)
 
@@ -241,17 +241,25 @@ def demo_quick_sort_partition(unsorted_array, left_index, right_index):
             larger = larger - 1
         if larger < smaller:
             true_pivot_found = True
+            print("--")
+            print(smaller)
+            print(larger)
         else:
             swap(unsorted_array, smaller, larger)
             display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
-            draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+            #draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+            print(left_index)
+            draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], left_index, pivot_index)
             draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+            print("--")
+            print(smaller)
+            print(larger)
             time.sleep(delay)
 
     #RESWAPPING PIVOT WITH FIRST ELEMENT!
     swap(unsorted_array, left_index, larger)
     display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
-    draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+    draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], pivot_index, pivot_index)
     draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
     time.sleep(delay)
     return larger
@@ -369,13 +377,10 @@ def retrieve_worst_case(array_size):
             worst_case_array.insert(0,value)
         return worst_case_array
     if(sorting_algo == 4):
-        #worst case for quick sort is when Mo3 pivot is second-largest/second-smallest and inversely sorted
+        #current worst case is just reverse order, but it really isn't the worst case
         for value in range(array_size):
             worst_case_array.insert(0,value)
-        temp = worst_case_array[0]
-        worst_case_array[0] = worst_case_array[array_size - 2]
-        worst_case_array[array_size - 2] = temp
-        #array looks like [1,998, 997, ... , 3, 2, 999, 0]. Pivot will be [1,500, 0], setting 1 as pivot
+
         return worst_case_array
 
 def retrieve_avg_case(array_size):
@@ -550,15 +555,17 @@ def main_loop():
                         print("example button for stats")
                         # find time cost for sorting arrays of increasing size (max size determined by n_factor)
                         for index in range(1, n_factor):
-                            best_case = retrieve_best_case(int(1000 * index))
-                            worst_case = retrieve_worst_case(int(1000 * index))
-                            avg_case = retrieve_avg_case(int(1000 * index))
-                            x.append(int(1000 * index))
+                            best_case = retrieve_best_case(int(math.pow(10, index)))
+                            worst_case = retrieve_worst_case(int(math.pow(10, index)))
+                            avg_case = retrieve_avg_case(int(math.pow(10, index))) #int(1000 * index)
+                            x.append(int(math.pow(10, index)))
+                            print("should be size: " + str(math.pow(10,index)))
                             # run test on the same sized array x number of times (where x = trial_count)
                             for trial in range(trial_count):
                                 record_sorting_time(best_case, 2)
                                 record_sorting_time(avg_case, 1)
                                 record_sorting_time(worst_case, 0)
+                                print("actual size: " + str(len(best_case)))
                                 # remove all time trials for same sized array and replace with 1 average time
                                 if len(best_times) == (index - 1) + trial_count:
                                     sum_time = 0

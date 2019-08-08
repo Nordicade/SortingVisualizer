@@ -60,3 +60,13 @@ Normal sorting methods will output to a file/matplotlib
         #print("A")
         #time.sleep(delay)
         #display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+
+previous worst case, which was better than my best case...
+        #worst case for quick sort is when Mo3 pivot is second-largest/second-smallest and inversely sorted
+        for value in range(array_size):
+            worst_case_array.insert(0,value)
+        temp = worst_case_array[0]
+        worst_case_array[0] = worst_case_array[array_size - 2]
+        worst_case_array[array_size - 2] = temp
+        #array looks like [1,998, 997, ... , 3, 2, 999, 0]. Pivot will be [1,500, 0], setting 1 as pivot
+        return worst_case_array
