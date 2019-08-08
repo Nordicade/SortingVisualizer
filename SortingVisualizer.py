@@ -19,13 +19,10 @@ red = (255, 0 , 0)
 blue = (0, 0, 255)
 
 visualizer_dim = 50,125,1100,300
-left_dim = 50,450,350,300
-middle_dim = 425,450,350,300
-right_dim = 800,450,350,300
 
 sorting_algo = 1
 visualizer_array_size = 50
-n_factor = 7
+n_factor = 6
 delay = .1
 pause_UI = False
 trial_count = 3
@@ -278,11 +275,20 @@ def demo_median_of_three(unsorted_array, left_index, middle_index, right_index):
     return pivot
 
 def merge_sort(unsorted_array):
-    print("merge")
+    #this creates base case for merge sort recursive call
+    if left_index < right_index:
+        middle = (right + left) // 2
+        merge_sort(unsorted_array, left_index, middle_index)
+        merge_sort(unsorted_array, middle_index + 1, right_index)
+        merge(unsorted_array, left_index, middle_index, right_index)
 
-
-
-
+def merge(unsorted_array, left_index, middle_index, right_index):
+    #divide array in half and copy elements to sub arrays
+    left_sub, right_sub = [], []
+    for n in range(left_index, middle_index):
+        left_sub = unsorted_array[n]
+    for n in range(middle_index, right_index):
+        right_sub = unsorted_array[n]
 
 def demo_merge_sort():
     print("merge")
@@ -330,9 +336,6 @@ def initial_build():
     global original_array
     global current_array
     global visualizer_dim
-    global left_dim
-    global middle_dim
-    global right_dim
     global visualizer_array_size
     element_array = build_line_array(visualizer_array_size)
     original_array = element_array.copy()
@@ -362,6 +365,11 @@ def retrieve_best_case(array_size):
         for value in range(array_size):
             best_case_array.append(value)
         return best_case_array
+    if(sorting_algo == 3):
+        #best case for quick sort is a sorted array (pivot will be 50)
+        for value in range(array_size):
+            best_case_array.append(value)
+        return best_case_array
     if(sorting_algo == 4):
         #best case for quick sort is a sorted array (pivot will be 50)
         for value in range(array_size):
@@ -381,6 +389,12 @@ def retrieve_worst_case(array_size):
         for value in range(array_size):
             worst_case_array.insert(0,value)
         return worst_case_array
+    if(sorting_algo == 3):
+        #worst case for merge sort is when each pair leads to a swap
+        for value in range(array_size):
+            worst_case_array.append(value)
+        worst_case_array = merge_scramble(worst_case_array)
+        return worst_case_array
     if(sorting_algo == 4):
         #current worst case is when median of three pivot is the second to smallest/largest elements
         for value in range(array_size):
@@ -397,6 +411,31 @@ def retrieve_worst_case(array_size):
         #for value in range(len(worst_case_array)):
         #    print(worst_case_array[value])
         return worst_case_array
+
+# helper method that inversely builds worst case
+# (help from https://stackoverflow.com/questions/24594112/when-will-the-worst-case-of-merge-sort-occur)
+def merge_scramble(sorted_array):
+    if len(sorted_array) == 1:
+        return sorted_array
+    #swap the sorted array to become unsorted
+    if len(sorted_array) == 2:
+        swap(sorted_array, 0, 1)
+    middle = (len(sorted_array) + 1 ) / 2
+    left_sub, right_sub = [], []
+    #fill sub arrays (needs to add even to left and odd to right)
+    for n in range(len(sorted_array)):
+        if n % 2 == 0:
+            right_sub.append(sorted_array[n])
+        else:
+            left_sub.append(sorted_array[n])
+    for n in range(len(left_sub)):
+        print(left_sub[n])
+    for n in range(len(right_sub)):
+        print(right_sub[n])
+
+    merge_scramble(left_sub)
+    merge_scramble(right_sub)
+    merge(sorted_array, left_sub, right_sub)
 
 def retrieve_avg_case(array_size):
     average_case_array = []
@@ -496,7 +535,8 @@ def record_sorting_time(unsorted_array, case):
             best_times.append(sort_time_end - sort_time_start)
     if(sorting_algo == 3):
         sort_time_start = time.time() - start_time
-        merge_sort(unsorted_array)
+        print(unsorted_array)
+        merge_sort(unsorted_array, 0 , len(unsorted_array) - 1)
         sort_time_end = time.time() - start_time
         if(case == 0):
             worst_times.append(sort_time_end - sort_time_start)
