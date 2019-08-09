@@ -238,19 +238,12 @@ def demo_quick_sort_partition(unsorted_array, left_index, right_index):
             larger = larger - 1
         if larger < smaller:
             true_pivot_found = True
-            print("--")
-            print(smaller)
-            print(larger)
         else:
             swap(unsorted_array, smaller, larger)
             display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
             #draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
-            print(left_index)
             draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], left_index, pivot_index)
             draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
-            print("--")
-            print(smaller)
-            print(larger)
             time.sleep(delay)
 
     #RESWAPPING PIVOT WITH FIRST ELEMENT!
@@ -274,21 +267,38 @@ def demo_median_of_three(unsorted_array, left_index, middle_index, right_index):
     +str(unsorted_array[middle_index].line_length)+" R: "+str(unsorted_array[right_index].line_length))
     return pivot
 
+# help from https://www.geeksforgeeks.org/merge-sort/
 def merge_sort(unsorted_array):
-    #this creates base case for merge sort recursive call
-    if left_index < right_index:
-        middle = (right + left) // 2
-        merge_sort(unsorted_array, left_index, middle_index)
-        merge_sort(unsorted_array, middle_index + 1, right_index)
-        merge(unsorted_array, left_index, middle_index, right_index)
-
-def merge(unsorted_array, left_index, middle_index, right_index):
-    #divide array in half and copy elements to sub arrays
     left_sub, right_sub = [], []
-    for n in range(left_index, middle_index):
-        left_sub = unsorted_array[n]
-    for n in range(middle_index, right_index):
-        right_sub = unsorted_array[n]
+    # this creates base case for merge sort recursive call
+    if len(unsorted_array) > 1:
+        middle = (len(unsorted_array)) // 2
+        # splitting unsorted array into sub arrays is easy when using python's slicing!
+        left_sub = unsorted_array[:middle]  #having no value for "x:middle" means it starts at the beginning of array
+        right_sub = unsorted_array[middle:] #having no value for "middle:x" means it ends at the end of array
+        merge_sort(left_sub)
+        merge_sort(right_sub)
+
+    # at this point, merging sub arrays begins (adding smallest element from sub, into merge arr)
+    left_sub_index, right_sub_index, merge_sub_index = 0,0,0
+    while(left_sub_index < len(left_sub)) and (right_sub_index < len(right_sub)):
+        if left_sub[left_sub_index] < right_sub[right_sub_index]:
+            unsorted_array[merge_sub_index] = left_sub[left_sub_index]
+            left_sub_index = left_sub_index + 1
+        else:
+            unsorted_array[merge_sub_index] = right_sub[right_sub_index]
+            right_sub_index = right_sub_index + 1
+        merge_sub_index = merge_sub_index + 1
+
+    #while loop above exits when one array is emptied. This while loop adds any remaining elements to merge arr
+    while (left_sub_index < len(left_sub)):
+        unsorted_array[merge_sub_index] = left_sub[left_sub_index]
+        left_sub_index = left_sub_index + 1
+        merge_sub_index = merge_sub_index + 1
+    while (right_sub_index < len(right_sub)):
+        unsorted_array[merge_sub_index] = right_sub[right_sub_index]
+        right_sub_index = right_sub_index + 1
+        merge_sub_index = merge_sub_index + 1
 
 def demo_merge_sort():
     print("merge")
@@ -420,22 +430,38 @@ def merge_scramble(sorted_array):
     #swap the sorted array to become unsorted
     if len(sorted_array) == 2:
         swap(sorted_array, 0, 1)
-    middle = (len(sorted_array) + 1 ) / 2
+    i, j = 0,0
+    middle = (len(sorted_array) + 1) // 2
     left_sub, right_sub = [], []
-    #fill sub arrays (needs to add even to left and odd to right)
-    for n in range(len(sorted_array)):
-        if n % 2 == 0:
-            right_sub.append(sorted_array[n])
-        else:
-            left_sub.append(sorted_array[n])
-    for n in range(len(left_sub)):
-        print(left_sub[n])
-    for n in range(len(right_sub)):
-        print(right_sub[n])
+    # splitting unsorted array into sub arrays is easy when using python's slicing!
+    left_sub = sorted_array[:middle]  #having no value for "x:middle" means it starts at the beginning of array
+    right_sub = sorted_array[middle:] #having no value for "middle:x" means it ends at the end of array
+
+    while(i < len(sorted_array)):
+        left_sub[j] = sorted_array[i]
+        i = i + 2
+        j = j + 1
+
+    i, j = 1,0
+    while(i < len(sorted_array)):
+        right_sub[j] = sorted_array[i]
+        i = i + 2
+        j = j + 1
 
     merge_scramble(left_sub)
     merge_scramble(right_sub)
     merge(sorted_array, left_sub, right_sub)
+    return sorted_array
+
+def merge(sorted_array, left_sub, right_sub):
+    i, j = 0,0
+    while(i < len(left_sub)):
+        sorted_array[i] = left_sub[i]
+        i = i + 1
+    while(j < len(right_sub)):
+        sorted_array[i] = right_sub[j]
+        j = j + 1
+        i = i + 1
 
 def retrieve_avg_case(array_size):
     average_case_array = []
@@ -535,8 +561,7 @@ def record_sorting_time(unsorted_array, case):
             best_times.append(sort_time_end - sort_time_start)
     if(sorting_algo == 3):
         sort_time_start = time.time() - start_time
-        print(unsorted_array)
-        merge_sort(unsorted_array, 0 , len(unsorted_array) - 1)
+        merge_sort(unsorted_array)
         sort_time_end = time.time() - start_time
         if(case == 0):
             worst_times.append(sort_time_end - sort_time_start)
