@@ -21,11 +21,13 @@ blue = (0, 0, 255)
 visualizer_dim = 50,125,1100,300
 
 sorting_algo = 1
-visualizer_array_size = 50
+visualizer_array_size = 20
 n_factor = 6
-delay = .1
-pause_UI = False
+delay = .2
 trial_count = 3
+
+pause_UI = False
+leftmost = 0
 
 original_array = []
 current_array = []
@@ -273,35 +275,118 @@ def merge_sort(unsorted_array):
     # this creates base case for merge sort recursive call
     if len(unsorted_array) > 1:
         middle = (len(unsorted_array)) // 2
-        # splitting unsorted array into sub arrays is easy when using python's slicing!
+        # splitting unsorted array into subarrays is easy when using python's slicing!
         left_sub = unsorted_array[:middle]  #having no value for "x:middle" means it starts at the beginning of array
         right_sub = unsorted_array[middle:] #having no value for "middle:x" means it ends at the end of array
         merge_sort(left_sub)
         merge_sort(right_sub)
 
-    # at this point, merging sub arrays begins (adding smallest element from sub, into merge arr)
-    left_sub_index, right_sub_index, merge_sub_index = 0,0,0
-    while(left_sub_index < len(left_sub)) and (right_sub_index < len(right_sub)):
-        if left_sub[left_sub_index] < right_sub[right_sub_index]:
+        # at this point, merging subarrays begins (adding smallest element from sub, into merge arr)
+        left_sub_index, right_sub_index, merge_sub_index = 0,0,0
+        while(left_sub_index < len(left_sub)) and (right_sub_index < len(right_sub)):
+            if left_sub[left_sub_index] < right_sub[right_sub_index]:
+                unsorted_array[merge_sub_index] = left_sub[left_sub_index]
+                left_sub_index = left_sub_index + 1
+            else:
+                unsorted_array[merge_sub_index] = right_sub[right_sub_index]
+                right_sub_index = right_sub_index + 1
+            merge_sub_index = merge_sub_index + 1
+
+        #while loop above exits when one array is emptied. This while loop adds any remaining elements to merge arr
+        while (left_sub_index < len(left_sub)):
             unsorted_array[merge_sub_index] = left_sub[left_sub_index]
             left_sub_index = left_sub_index + 1
-        else:
+            merge_sub_index = merge_sub_index + 1
+        while (right_sub_index < len(right_sub)):
             unsorted_array[merge_sub_index] = right_sub[right_sub_index]
             right_sub_index = right_sub_index + 1
-        merge_sub_index = merge_sub_index + 1
-
-    #while loop above exits when one array is emptied. This while loop adds any remaining elements to merge arr
-    while (left_sub_index < len(left_sub)):
-        unsorted_array[merge_sub_index] = left_sub[left_sub_index]
-        left_sub_index = left_sub_index + 1
-        merge_sub_index = merge_sub_index + 1
-    while (right_sub_index < len(right_sub)):
-        unsorted_array[merge_sub_index] = right_sub[right_sub_index]
-        right_sub_index = right_sub_index + 1
-        merge_sub_index = merge_sub_index + 1
+            merge_sub_index = merge_sub_index + 1
 
 def demo_merge_sort():
-    print("merge")
+    global current_array
+    global visualizer_dim
+    global delay
+
+    demo_merge_sort_recursive(current_array)
+
+def demo_merge_sort_recursive(unsorted_array):
+    global current_array
+    global visualizer_dim
+    global delay
+    global leftmost
+
+    left_sub, right_sub = [], []
+    # this creates base case for merge sort recursive call
+    if len(unsorted_array) > 1:
+        middle = (len(unsorted_array)) // 2
+        # splitting unsorted array into subarrays is easy when using python's slicing!
+        left_sub = unsorted_array[:middle]  #having no value for "x:middle" means [start, middle)
+        right_sub = unsorted_array[middle:] #having no value for "middle:x" means [middle, end]
+
+        print("middle : " + str(middle))
+        demo_merge_sort_recursive(left_sub)
+        demo_merge_sort_recursive(right_sub)
+
+        # at this point, merging subarrays begins (adding smallest element from sub, into merge arr)
+        left_sub_index, right_sub_index, merge_sub_index = 0,0,0
+        while(left_sub_index < len(left_sub)) and (right_sub_index < len(right_sub)):
+            if left_sub[left_sub_index].line_length < right_sub[right_sub_index].line_length:
+                unsorted_array[merge_sub_index] = left_sub[left_sub_index]
+                left_sub_index = left_sub_index + 1
+            else:
+                unsorted_array[merge_sub_index] = right_sub[right_sub_index]
+                right_sub_index = right_sub_index + 1
+            #set to current
+            #current_array[merge_sub_index] = unsorted_array[merge_sub_index]
+            #set to current
+            merge_sub_index = merge_sub_index + 1
+
+            display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+            draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], leftmost, merge_sub_index)
+            draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+            print(leftmost)
+            time.sleep(delay)
+
+        #while loop above exits when one array is emptied. This while loop adds any remaining elements to merge arr
+        while (left_sub_index < len(left_sub)):
+            unsorted_array[merge_sub_index] = left_sub[left_sub_index]
+            #set to current
+            #current_array[merge_sub_index] = unsorted_array[left_sub_index]
+            #set to current
+            left_sub_index = left_sub_index + 1
+            merge_sub_index = merge_sub_index + 1
+
+            display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+            draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], leftmost, merge_sub_index)
+            draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+            print(leftmost)
+            time.sleep(delay)
+
+        while (right_sub_index < len(right_sub)):
+            unsorted_array[merge_sub_index] = right_sub[right_sub_index]
+            #set to current
+            #current_array[merge_sub_index] = unsorted_array[right_sub_index]
+            #set to current
+            right_sub_index = right_sub_index + 1
+            merge_sub_index = merge_sub_index + 1
+
+            display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+            draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], leftmost, merge_sub_index)
+            draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+            print(leftmost)
+            time.sleep(delay)
+
+        if(len(unsorted_array) == len(current_array)):
+            for n in range(len(unsorted_array)):
+                print(unsorted_array[n].line_length)
+            current_array = unsorted_array
+            display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+            draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+            draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+            draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+            print("B")
+            time.sleep(delay)
+
 def heap_sort():
     print("heap")
 def demo_heap_sort():
@@ -433,7 +518,7 @@ def merge_scramble(sorted_array):
     i, j = 0,0
     middle = (len(sorted_array) + 1) // 2
     left_sub, right_sub = [], []
-    # splitting unsorted array into sub arrays is easy when using python's slicing!
+    # splitting unsorted array into subarrays is easy when using python's slicing!
     left_sub = sorted_array[:middle]  #having no value for "x:middle" means it starts at the beginning of array
     right_sub = sorted_array[middle:] #having no value for "middle:x" means it ends at the end of array
 
@@ -661,7 +746,6 @@ def main_loop():
                                         removed_element = best_times.pop(-1)
                                         sum_time = sum_time + removed_element
                                     best_times.append(sum_time / trial_count)
-                                    print("length after trials" + str(len(best_times)))
                                     sum_time = 0
                                     for sum_count in range(trial_count):
                                         removed_element = avg_times.pop(-1)
@@ -670,7 +754,6 @@ def main_loop():
                                     sum_time = 0
                                     for sum_count in range(trial_count):
                                         removed_element = worst_times.pop(-1)
-                                        #print("worst: " + str(removed_element))
                                         sum_time = sum_time + removed_element
                                     worst_times.append(sum_time / trial_count)
 
