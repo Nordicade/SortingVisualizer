@@ -25,9 +25,7 @@ visualizer_array_size = 20
 n_factor = 6
 delay = .2
 trial_count = 3
-
 pause_UI = False
-leftmost = 0
 
 original_array = []
 current_array = []
@@ -313,7 +311,6 @@ def demo_merge_sort_recursive(unsorted_array):
     global current_array
     global visualizer_dim
     global delay
-    global leftmost
 
     left_sub, right_sub = [], []
     # this creates base case for merge sort recursive call
@@ -323,7 +320,6 @@ def demo_merge_sort_recursive(unsorted_array):
         left_sub = unsorted_array[:middle]  #having no value for "x:middle" means [start, middle)
         right_sub = unsorted_array[middle:] #having no value for "middle:x" means [middle, end]
 
-        print("middle : " + str(middle))
         demo_merge_sort_recursive(left_sub)
         demo_merge_sort_recursive(right_sub)
 
@@ -336,44 +332,32 @@ def demo_merge_sort_recursive(unsorted_array):
             else:
                 unsorted_array[merge_sub_index] = right_sub[right_sub_index]
                 right_sub_index = right_sub_index + 1
-            #set to current
-            #current_array[merge_sub_index] = unsorted_array[merge_sub_index]
-            #set to current
             merge_sub_index = merge_sub_index + 1
 
             display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
-            draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], leftmost, merge_sub_index)
+            draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], 0, merge_sub_index)
             draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
-            print(leftmost)
             time.sleep(delay)
 
         #while loop above exits when one array is emptied. This while loop adds any remaining elements to merge arr
         while (left_sub_index < len(left_sub)):
             unsorted_array[merge_sub_index] = left_sub[left_sub_index]
-            #set to current
-            #current_array[merge_sub_index] = unsorted_array[left_sub_index]
-            #set to current
             left_sub_index = left_sub_index + 1
             merge_sub_index = merge_sub_index + 1
 
             display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
-            draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], leftmost, merge_sub_index)
+            draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], 0, merge_sub_index)
             draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
-            print(leftmost)
             time.sleep(delay)
 
         while (right_sub_index < len(right_sub)):
             unsorted_array[merge_sub_index] = right_sub[right_sub_index]
-            #set to current
-            #current_array[merge_sub_index] = unsorted_array[right_sub_index]
-            #set to current
             right_sub_index = right_sub_index + 1
             merge_sub_index = merge_sub_index + 1
 
             display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
-            draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], leftmost, merge_sub_index)
+            draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], 0, merge_sub_index)
             draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
-            print(leftmost)
             time.sleep(delay)
 
         if(len(unsorted_array) == len(current_array)):
