@@ -5,6 +5,7 @@ import pygame
 import time
 import math
 import random
+import heapq
 import matplotlib.pyplot as plt
 
 pygame.init()
@@ -95,6 +96,7 @@ def selection_sort(unsorted_array):
         temp = unsorted_array[sorting_index]
         unsorted_array[sorting_index] = unsorted_array[min_index]
         unsorted_array[min_index] = temp
+        print(sorting_index)
 
 def demo_selection_sort():
     global current_array
@@ -333,7 +335,7 @@ def demo_merge_sort_recursive(unsorted_array):
             current_array[j + len(left_sub)] = right_sub[j]
             j = j + 1
         display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
-        draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+        draw_element_array_comparison(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3], 1, len(left_sub) + 1)
         draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
         time.sleep(delay)
 
@@ -369,8 +371,23 @@ def demo_merge_sort_recursive(unsorted_array):
             draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
             time.sleep(delay)
 
-def heap_sort():
-    print("heap")
+def heap_sort(array):
+    print("initial" + str(list(array)))
+    index = len(array) - 1
+    if index > 100 or index < 1:
+        import sys
+        print(sys._getframe(1).f_code.co_name)
+        quit()
+    sorted_array = []
+    heapq._heapify_max(array)
+    print(list(array))
+    while(index >= 0):
+        sorted_array.insert(0, heapq.heappop(array))
+        index = index - 1
+        heapq._heapify_max(array)
+    print(list(sorted_array))
+    return sorted_array
+
 def demo_heap_sort():
     print("heap")
 
@@ -452,6 +469,11 @@ def retrieve_best_case(array_size):
         for value in range(array_size):
             best_case_array.append(value)
         return best_case_array
+    if(sorting_algo == 5):
+        #best case for heap sort is a sorted array
+        for value in range(array_size):
+            best_case_array.append(value)
+        return best_case_array
 
 def retrieve_worst_case(array_size):
     global sorting_algo
@@ -487,6 +509,11 @@ def retrieve_worst_case(array_size):
             middle = right - left // 2
         #for value in range(len(worst_case_array)):
         #    print(worst_case_array[value])
+        return worst_case_array
+    if(sorting_algo == 5):
+        #worst case for heap sort is similar to best case, but with more swaps
+        for value in range(array_size):
+            worst_case_array.insert(0,value)
         return worst_case_array
 
 # helper method that inversely builds worst case
@@ -639,6 +666,17 @@ def record_sorting_time(unsorted_array, case):
     if(sorting_algo == 4):
         sort_time_start = time.time() - start_time
         quick_sort(unsorted_array)
+        sort_time_end = time.time() - start_time
+        if(case == 0):
+            worst_times.append(sort_time_end - sort_time_start)
+        elif(case == 1):
+            avg_times.append(sort_time_end - sort_time_start)
+        else:
+            best_times.append(sort_time_end - sort_time_start)
+    if(sorting_algo == 5):
+        print("record "+ str(list(unsorted_array)))
+        sort_time_start = time.time() - start_time
+        heap_sort(unsorted_array)
         sort_time_end = time.time() - start_time
         if(case == 0):
             worst_times.append(sort_time_end - sort_time_start)
