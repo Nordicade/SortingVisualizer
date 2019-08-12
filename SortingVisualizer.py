@@ -23,7 +23,7 @@ visualizer_dim = 50,125,1100,300
 
 sorting_algo = 1
 visualizer_array_size = 20
-n_factor = 6
+n_factor = 15
 delay = .5
 trial_count = 3
 pause_UI = False
@@ -96,7 +96,6 @@ def selection_sort(unsorted_array):
         temp = unsorted_array[sorting_index]
         unsorted_array[sorting_index] = unsorted_array[min_index]
         unsorted_array[min_index] = temp
-        print(sorting_index)
 
 def demo_selection_sort():
     global current_array
@@ -372,20 +371,13 @@ def demo_merge_sort_recursive(unsorted_array):
             time.sleep(delay)
 
 def heap_sort(array):
-    print("initial" + str(list(array)))
     index = len(array) - 1
-    if index > 100 or index < 1:
-        import sys
-        print(sys._getframe(1).f_code.co_name)
-        quit()
     sorted_array = []
-    heapq._heapify_max(array)
-    print(list(array))
+    heapq._heapify_max(array) # O(N)
     while(index >= 0):
-        sorted_array.insert(0, heapq.heappop(array))
+        sorted_array.insert(0, heapq.heappop(array))   #O(Log N)
         index = index - 1
-        heapq._heapify_max(array)
-    print(list(sorted_array))
+        heapq._heapify_max(array)   # O(N)
     return sorted_array
 
 def demo_heap_sort():
@@ -674,7 +666,6 @@ def record_sorting_time(unsorted_array, case):
         else:
             best_times.append(sort_time_end - sort_time_start)
     if(sorting_algo == 5):
-        print("record "+ str(list(unsorted_array)))
         sort_time_start = time.time() - start_time
         heap_sort(unsorted_array)
         sort_time_end = time.time() - start_time
@@ -750,15 +741,20 @@ def main_loop():
                         print("example button for stats")
                         # find time cost for sorting arrays of increasing size (max size determined by n_factor)
                         for index in range(1, n_factor):
-                            best_case = retrieve_best_case(int(math.pow(10, index)))
-                            worst_case = retrieve_worst_case(int(math.pow(10, index)))
-                            avg_case = retrieve_avg_case(int(math.pow(10, index))) #int(1000 * index)
-                            x.append(int(math.pow(10, index)))
+                            #multiplier = int(math.pow(10, index))
+                            multiplier = int(500 * index)
+                            x.append(multiplier)
                             # run test on the same sized array x number of times (where x = trial_count)
                             for trial in range(trial_count):
+                                best_case = retrieve_best_case(multiplier)
+                                worst_case = retrieve_worst_case(multiplier)
+                                avg_case = retrieve_avg_case(multiplier) #int(1000 * index)
                                 record_sorting_time(best_case, 2)
                                 record_sorting_time(avg_case, 1)
                                 record_sorting_time(worst_case, 0)
+                                best_case = []
+                                worst_case = []
+                                avg_case = []
                                 # remove all time trials for same sized array and replace with 1 average time
                                 if len(best_times) == (index - 1) + trial_count:
                                     sum_time = 0
