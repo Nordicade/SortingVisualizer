@@ -1,6 +1,11 @@
 DATA SORTING VISUALIZER
 ------------------------
 
+Current Notes:
+demo_heap_sort :
+	to visually show the heap pop and push process, the array size grows from 1, which is a problem. So! to fix this, i'm going to only print the old current array, but insert the newly added values from the line heap. that way, the line heap is being grown, and the old values are there to fill it to the size n.
+
+
 TODO:
 add text and highlighted versions of play, reset, and data buttons
 tie events to buttons

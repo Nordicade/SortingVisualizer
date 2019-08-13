@@ -23,7 +23,7 @@ visualizer_dim = 50,125,1100,300
 
 sorting_algo = 1
 visualizer_array_size = 20
-n_factor = 15
+n_factor = 6
 delay = .5
 trial_count = 3
 pause_UI = False
@@ -49,6 +49,14 @@ def build_line_array(array_size):
     for index in range(1, array_size):
         temp = line_element()
         temp.line_length = index
+        line_array.append(temp)
+    return line_array
+
+def convert_line_array(array):
+    line_array = []
+    for value in list(array):
+        temp = line_element()
+        temp.line_length = value
         line_array.append(temp)
     return line_array
 
@@ -361,8 +369,8 @@ def demo_merge_sort_recursive(unsorted_array):
             merge_sub_index = merge_sub_index + 1
 
         if(len(unsorted_array) == len(current_array)):
-            for n in range(len(unsorted_array)):
-                print(unsorted_array[n].line_length)
+#            for n in range(len(unsorted_array)):
+#                print(unsorted_array[n].line_length)
             current_array = unsorted_array
             display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
             draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
@@ -370,18 +378,65 @@ def demo_merge_sort_recursive(unsorted_array):
             draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
             time.sleep(delay)
 
+# copied code from https://docs.python.org/2/library/heapq.html#basic-examples
 def heap_sort(array):
-    index = len(array) - 1
+    length = len(array)
     sorted_array = []
-    heapq._heapify_max(array) # O(N)
-    while(index >= 0):
-        sorted_array.insert(0, heapq.heappop(array))   #O(Log N)
-        index = index - 1
-        heapq._heapify_max(array)   # O(N)
-    return sorted_array
+    for value in array:
+        heapq.heappush(sorted_array, value)
+    return[heapq.heappop(sorted_array) for i in range(len(sorted_array))]
+
 
 def demo_heap_sort():
-    print("heap")
+    global current_array
+    #extract line_length values from current array
+    line_length_array = []
+    line_length_heap = []
+    #place into it's own array, and convert into heapq
+    for n in range(len(current_array)):
+        line_length_array.append(current_array[n].line_length)
+    for value in list(line_length_array):
+        print(value)
+        heapq.heappush(line_length_heap, value)
+        #before popping the largest element:
+        #build a new line element using line length values from heapq
+        #this temp array is to visualize the change while maintaining size
+        temp = []
+        for value in list(line_length_heap):
+            temp.append(value)
+        size_of_heap = len(temp)
+        for index in range(size_of_heap , len(line_length_array)):
+            temp.append(line_length_array[index])
+        #temp should now be filled with heap values, and excess from current (line length array is current but just length)
+        #line_heap = convert_line_array(line_length_heap)
+        line_heap = convert_line_array(temp)
+        #print to display
+        current_array = line_heap
+        display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+        draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+        draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+        draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+        time.sleep(delay)
+        #repeat
+    #now for each element in the heap, pull the smallest element out
+    #convert it into a line element and set it at beginning of current array
+    #draw to display and repeat
+    for index in range(len(temp)):
+        smallest = heapq.heappop(temp)
+        #set smallest to current array at index
+        #then set the remainder of the temp heap to current array and THEN display
+        line_length_array[index] = smallest
+        i = 0
+        for remainder in range(index + 1, len(line_length_array)):
+            line_length_array[remainder] = temp[i]
+            i = i + 1
+        #for n in list(line_heap):
+        #    print(n)
+        current_array = convert_line_array(line_length_array)
+        display.fill(white, (visualizer_dim[0]+1,visualizer_dim[1]+1,visualizer_dim[2]-2,visualizer_dim[3]-2))
+        draw_element_array(visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3])
+        draw_outline((visualizer_dim[0],visualizer_dim[1],visualizer_dim[2],visualizer_dim[3]))
+        time.sleep(delay)
 
 def draw_element_array(x, y, width, height):
     global current_array
@@ -667,7 +722,7 @@ def record_sorting_time(unsorted_array, case):
             best_times.append(sort_time_end - sort_time_start)
     if(sorting_algo == 5):
         sort_time_start = time.time() - start_time
-        heap_sort(unsorted_array)
+        result = heap_sort(unsorted_array)
         sort_time_end = time.time() - start_time
         if(case == 0):
             worst_times.append(sort_time_end - sort_time_start)
@@ -741,8 +796,8 @@ def main_loop():
                         print("example button for stats")
                         # find time cost for sorting arrays of increasing size (max size determined by n_factor)
                         for index in range(1, n_factor):
-                            #multiplier = int(math.pow(10, index))
-                            multiplier = int(500 * index)
+                            multiplier = int(math.pow(10, index))
+                            #multiplier = int(500 * index)
                             x.append(multiplier)
                             # run test on the same sized array x number of times (where x = trial_count)
                             for trial in range(trial_count):
